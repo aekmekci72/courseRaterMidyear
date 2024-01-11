@@ -1,27 +1,40 @@
-const express = require('express');
-const { createConnection } = require('./src/lib/db/mysql.cjs');
+// server.js (or your server file)
+
+import express from 'express';
+import cors from 'cors';
+import pkg from './mysql.cjs';
+
+const { createConnection } = pkg;
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000; // Set your desired port
 
-console.log('Server file executed.');
+app.use(cors());
 
-app.get('/api/courses', async (req, res) => {
+const testDatabaseConnection = async () => {
   try {
     const connection = await createConnection();
 
-    try {
-      const [rows] = await connection.execute('SELECT * FROM courses');
-      res.json(rows);
-    } finally {
-      connection.end();
-    }
+    const [rows] = await connection.execute('SELECT * FROM courses');
+
+    await connection.end();
+
+    return rows;
   } catch (error) {
-    console.error('Error fetching courses:', error);
+    console.error('Error connecting to the database:', error);
+    throw error;
+  }
+};
+
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courses = await testDatabaseConnection();
+    res.json(courses);
+  } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
