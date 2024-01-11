@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 console.log('Server file executed.');
-// 
+
 app.get('/api/courses', async (req, res) => {
   try {
     const connection = await createConnection();
