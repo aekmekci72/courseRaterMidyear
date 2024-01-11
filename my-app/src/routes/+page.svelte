@@ -32,7 +32,8 @@
 	@font-face {
 	  font-family: 'EyesomeScript';
 	  src: url('EyesomeScript.otf') format('opentype');
-	}
+	//yay
+}
 	.custom-font {
 	  font-family: 'EyesomeScript', sans-serif;
 	}
