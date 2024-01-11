@@ -1,59 +1,61 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
-</script>
-
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
+<script context="module" lang="ts">
+	interface Course {
+	  id: string;
+	  name: string;
+	  teacher: string;
 	}
-
-	h1 {
-		width: 100%;
+  
+	export async function load() {
+	  try {
+		const res = await fetch('/api/courses');
+		if (!res.ok) {
+		  throw new Error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
+		}
+  
+		const courses: Course[] = await res.json();
+		console.log('Courses in load function:', courses);
+		return { props: { courses } };
+	  } catch (error) {
+		console.error('Error fetching courses:', error);
+		return { props: { courses: [] as Course[] } };
+	  }
 	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+  </script>
+  
+  <script lang="ts">
+	interface Course {
+	  id: string;
+	  name: string;
+	  teacher: string;
 	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+  
+	export let courses: Course[] = [];
+  
+	console.log('Courses in Svelte component:', courses);
+  
+	console.log('Is courses array empty?', courses.length === 0);
+  </script>
+  
+  <h1>All Courses</h1>
+  
+  <ul>
+	{#each courses as course (course.id)}
+	  <li>{course.name}</li>
+	{/each}
+  </ul>
+  
+  <style lang="postcss">
+	  @font-face {
+	  font-family: 'EyesomeScript';
+	  src: url('EyesomeScript.otf') format('opentype');
 	}
-</style>
+  
+	.custom-font {
+	  font-family: 'EyesomeScript', sans-serif;
+	}
+  
+	:global(html) {
+	  background-color: #FFFBF6;
+	}
+  </style>
+s  
