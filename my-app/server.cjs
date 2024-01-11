@@ -12,6 +12,7 @@ app.get('/api/courses', async (req, res) => {
 
     try {
       const [rows] = await connection.execute('SELECT * FROM courses');
+      console.log(rows);
       res.json(rows);
     } finally {
       connection.end();

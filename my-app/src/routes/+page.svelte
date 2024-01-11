@@ -6,6 +6,7 @@
 		  throw new Error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
 		}
 		
+		
 		const courses = await res.json();
 		console.log('Courses in load function:', courses);
 		return { props: { courses } };
@@ -14,6 +15,7 @@
 		return { props: { courses: [] } };
 	  }
 	}
+	
 	
   </script>
   
