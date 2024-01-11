@@ -1,7 +1,7 @@
 <script context="module" lang="javascript">
 	export async function load() {
 	  try {
-		const res = await fetch('/api/courses');
+		const res = await fetch('http://localhost:3000/api/courses'); // Adjust the URL accordingly
 		if (!res.ok) {
 		  throw new Error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
 		}
@@ -14,29 +14,31 @@
 	  }
 	}
   </script>
-  <script lang="javascript">
+  
+  <script>
 	/**
-       * @type {string | any[]}
+       * @type {any}
        */
-	 export let courses = [];
-	console.log('Courses in Svelte component:', courses);
-	console.log('Is courses array empty?', courses.length === 0);
+	 export let courses;
   </script>
+  
   <h1>All Courses</h1>
   <ul>
 	{#each courses as course (course.id)}
 	  <li>{course.name}</li>
 	{/each}
   </ul>
+  
   <style lang="postcss">
 	@font-face {
 	  font-family: 'EyesomeScript';
 	  src: url('EyesomeScript.otf') format('opentype');
-	//yay
-}
+	}
+  
 	.custom-font {
 	  font-family: 'EyesomeScript', sans-serif;
 	}
+  
 	:global(html) {
 	  background-color: #FFFBF6;
 	}
