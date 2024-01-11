@@ -5,7 +5,7 @@
 		if (!res.ok) {
 		  throw new Error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
 		}
-  
+		
 		const courses = await res.json();
 		console.log('Courses in load function:', courses);
 		return { props: { courses } };
@@ -14,6 +14,7 @@
 		return { props: { courses: [] } };
 	  }
 	}
+	
   </script>
   
   <script>
@@ -26,9 +27,10 @@
   <h1>All Courses</h1>
   
   <ul>
-	{#each courses as course (course.id)}
+	<p>{courses[0].name}</p>
+	<!-- {#each courses as course (course.id)}
 	  <li>{course.name}</li>
-	{/each}
+	{/each} -->
   </ul>
   <style lang="postcss">
 	@font-face {
