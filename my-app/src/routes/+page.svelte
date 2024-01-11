@@ -27,7 +27,7 @@
   
   {#if courses && courses.length > 0}
 	<ul>
-	  {#each courses as course (course.name)}
+	  {#each courses as course (course.id)}
 		<li>{course.name}</li>
 	  {/each}
 	</ul>
