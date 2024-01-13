@@ -18,7 +18,7 @@
   
   <script>
 	/**
-       * @type {Array<{ name: string }>}
+       * @type {Array<{ id: number, name: string, teacher: string }>}
        */
 	 export let courses;
   </script>
@@ -26,14 +26,14 @@
   <h1>All Courses</h1>
   
   {#if courses && courses.length > 0}
-	<ul>
-	  {#each courses as course (course.id)}
-		<li>{course.name}</li>
-	  {/each}
-	</ul>
-  {:else}
-	<p>No courses available.</p>
-  {/if}
+  <ul>
+    {#each courses as { name }}
+      <li>{name}</li>
+    {/each}
+  </ul>
+{:else}
+  <p>No courses available.</p>
+{/if}
   
   
   <style lang="postcss">
