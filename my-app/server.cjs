@@ -15,7 +15,7 @@ app.get('/api/courses', async (req, res) => {
     const connection = await createConnection();
 
     try {
-      const [rows] = await connection.execute('SELECT * FROM courses');
+      const [rows] = await connection.execute('SELECT * FROM course');
       console.log(rows);
       res.json(rows);
     } finally {

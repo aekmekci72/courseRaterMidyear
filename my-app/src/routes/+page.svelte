@@ -1,66 +1,15 @@
-<!-- <script context="module">
-	export async function load() {
-	  try {
-		const res = await fetch('http://localhost:3000/api/courses');
-		if (!res.ok) {
-		  throw new Error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
-		}
-		console.log("Fetch pass");
-  
-		const courses = await res.json();
-		console.log('Courses in load function:', courses);
-		return { props: { courses } };
-		
-	  } catch (error) {
-		console.error('Error fetching courses:', error);
-		return { props: { courses: [] } };
-	  }
-	}
-  </script>
-  
-  
-  <script>
-	/**
-       * @type {Array<{ id: number, name: string, teacher: string }>}
-       */
-	 export let courses;
-  </script>
-
-  <h1>All Courses</h1>
-  
-  {#if courses && courses.length > 0}
-  <ul>
-    {#each courses as { name }}
-      <li>{name}</li>
-    {/each}
-  </ul>
-{:else}
-  <p>No courses available.</p>
-{/if}
-  
-  
-  <style lang="postcss">
-	@font-face {
-	  font-family: 'EyesomeScript';
-	  src: url('EyesomeScript.otf') format('opentype');
-	}
-  
-	.custom-font {
-	  font-family: 'EyesomeScript', sans-serif;
-	}
-  
-	:global(html) {
-	  background-color: #FFFBF6;
-	}
-  </style>
-   -->
-
    <script>
 	/**
-	 * @typedef {Object} Course
-	 * @property {number} id - The ID of the course.
-	 * @property {string} name - The name of the course.
-	 * @property {string} teacher - The name of the teacher for the course.
+   * @typedef {Object} Course
+   * @property {number} course_id
+   * @property {string} course_name
+   * @property {number} teacher_id
+   * @property {number} r1
+   * @property {number} r2
+   * @property {string} r3
+   * @property {number} active
+   * @property {string} description
+   * @property {string} prereq
 	 */
   
 	import { onMount } from 'svelte';
@@ -75,11 +24,16 @@
   </script>
   
   <main>
-	{#each courses as course (course.id)}
-	  <div>
-		<p>Course: {course.name}</p>
-		<p>Teacher: {course.teacher}</p>
-	  </div>
-	{/each}
-  </main>
+	<h1>All Courses</h1>
   
+	{#if courses && courses.length > 0}
+		{#each courses as course (course.course_id)}
+		<div>
+			<p>Course: {course.course_name}</p>
+			<p>Description: {course.description}</p>
+		  </div>
+		  {/each}
+  {:else}
+	<p>No courses available.</p>
+  {/if}
+  </main>
