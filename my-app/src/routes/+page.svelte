@@ -24,7 +24,7 @@
   </script>
   
   <main>
-	<h1>All Courses</h1>
+	<h1 class="text-3xl font-bold underline">All Courses</h1>
   
 	{#if courses && courses.length > 0}
 		{#each courses as course (course.course_id)}
