@@ -56,22 +56,30 @@
    -->
 
    <script>
+	/**
+	 * @typedef {Object} Course
+	 * @property {number} id - The ID of the course.
+	 * @property {string} name - The name of the course.
+	 * @property {string} teacher - The name of the teacher for the course.
+	 */
+  
 	import { onMount } from 'svelte';
-	
-	let name1 = '';
-	
+  
+	/** @type {Array<Course>} */
+	let courses = [];
+  
 	onMount(async () => {
 	  const response = await fetch('http://localhost:3000/api/courses');
-	  const courses = await response.json();
-	  
-	  // Assuming courses is an array of objects
-	  if (courses.length > 0) {
-		name1 = courses[0].name;
-	  }
+	  courses = await response.json();
 	});
   </script>
   
   <main>
-	{name1}
+	{#each courses as course (course.id)}
+	  <div>
+		<p>Course: {course.name}</p>
+		<p>Teacher: {course.teacher}</p>
+	  </div>
+	{/each}
   </main>
   
