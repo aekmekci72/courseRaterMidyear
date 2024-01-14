@@ -165,6 +165,24 @@
 	  cursor: pointer;
 	  font-family: 'Indie Flower', cursive;
 	}
+
+	@media only screen and (max-width: 768px) {
+    /* Styles for screens with a maximum width of 768px (adjust as needed) */
+
+    .course-card {
+      width: 100%; /* Set the width to 100% for mobile screens */
+      box-shadow: none; /* Remove box shadow on mobile screens if needed */
+    }
+
+    .rating-info {
+      display: none; /* Hide the rating info on mobile screens */
+    }
+
+    .course-card:hover .rating-info {
+      display: none; /* Ensure rating info stays hidden on mobile screens */
+    }
+  }
+
   </style>
   
   <Navbar />
