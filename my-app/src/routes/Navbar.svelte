@@ -78,6 +78,8 @@
   @media screen and (max-width: 768px) {
     .navbar {
       flex-direction: row; /* Change flex-direction to column for small screens */
+      justify-content: center;
+      margin-bottom: 6rem;
     }
 
     .nav-links {
@@ -88,18 +90,20 @@
       width: 100%;
       background-color: #FFFBF6;
       z-index: 1;
+      justify-content: center;
+
     }
 
     .nav-links-closed {
       display: none;
+      justify-content: center;
+
     }
 
     .nav-links-closed a {
       display: none;
-    }
+      justify-content: center;
 
-    .hamburger-icon {
-      display: block;
     }
   }
 </style>

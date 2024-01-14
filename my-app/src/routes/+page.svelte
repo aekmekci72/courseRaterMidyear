@@ -14,6 +14,8 @@
   
 	import { onMount } from 'svelte';
 	import Navbar from './Navbar.svelte';
+	import Modal from './Modal.svelte';
+
   
 	/** @type {Array<Course>} */
 	let courses = [];
@@ -33,9 +35,18 @@
 		console.error('Error fetching courses:', error);
 	  }
 	});
+
+	
+let showModal = false;
+
+function openModal() {
+  showModal = true;
+}
+
   
 	function handleButtonClick() {
-	  console.log("Implement rating logic");
+	  openModal();
+
 	}
   
 	/**
@@ -48,6 +59,7 @@
 	function hideRatings() {
 	  hoveredCourse = null;
 	}
+
   </script>
   
   <style>
@@ -216,6 +228,8 @@
 	{:else}
 	  <p class="no-courses">No courses available.</p>
 	{/if}
+
+	<Modal bind:isOpen={showModal} />
   
   </main>
   
