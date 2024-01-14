@@ -91,12 +91,13 @@
 	  margin-right: auto;
 	  text-align: left;
 	  position: relative; /* Added position relative for absolute positioning of rating-info */
-	  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow transition */
+	  transition: transform 0.5s ease, box-shadow 0.5s ease; /* Increased transition time to 0.5s */
 
 	}
   
 	.course-card:hover {
-	  transform: translateY(-5px);
+		transform: translateY(-5px);
+    transition: transform 0.5s ease, box-shadow 0.5s ease; /* Increased transition time to 0.5s */
 	  
 	}
   
