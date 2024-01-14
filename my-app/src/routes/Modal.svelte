@@ -21,10 +21,10 @@ function setRating(value) {
 {#if isOpen}
   <div class="modal">
     <div class="modal-content">
-      <h2>Survey Questions</h2>
+      <h2>COURSE NAME</h2>
 
       <div class="survey-question">
-        <label>Rate the first question:</label>
+        <label>Difficulty:</label>
         <div class="star-rating">
           <input type="radio" id="star1" name="rating1" value="1" />
           <label for="star1" on:click={() => setRating(1)}><i class="fas fa-star" class:filled={rating >= 1}></i></label>
@@ -40,7 +40,7 @@ function setRating(value) {
       </div>
 
       <div class="survey-question">
-        <label>Rate the second question:</label>
+        <label>Interest:</label>
         <div class="star-rating">
           <input type="radio" id="star6" name="rating2" value="1" />
           <label for="star6"><i class="fas fa-star"></i></label>
@@ -56,11 +56,16 @@ function setRating(value) {
       </div>
 
       <div class="survey-question">
-        <label>Choose an option for the third question:</label>
+        <label>Teaching style:</label>
         <select>
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
+          <option value="option1">Slideshows</option>
+          <option value="option2">Lecture</option>
+          <option value="option3">Code Along</option>
+          <option value="option3">Interactive</option>
+          <option value="option3">Project Based</option>
+          <option value="option3">Worksheet heavy</option>
+          <option value="option3">Test heavy</option>
+          
         </select>
       </div>
 
@@ -86,7 +91,7 @@ function setRating(value) {
     background: #fff;
     padding: 40px; 
     border-radius: 8px;
-    opacity: 0.7;
+    opacity: 0.82;
   }
 
   .survey-question {
