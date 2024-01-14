@@ -66,7 +66,7 @@
 	}
   
 	main {
-	  margin-top: 5rem;
+	  margin-top: 3.5rem;
 	  text-align: center;
 	}
   
@@ -210,7 +210,7 @@
 			  </div>
 			</div>
 		  </div>
-		  <button on:click={() => handleButtonClick()}>Rate Me</button>
+		  <button on:click={() => handleButtonClick()}>Rate</button>
 		</div>
 	  {/each}
 	{:else}
