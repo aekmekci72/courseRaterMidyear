@@ -4,6 +4,7 @@
 <!-- Modal.svelte -->
 <script>
   export let isOpen = false;
+  export let courseName = '';
 
   function closeModal() {
     isOpen = false;
@@ -11,17 +12,16 @@
 
   let rating = 0;
 
-/** @type {(value: number) => void} */
-function setRating(value) {
-  rating = value;
-}
-
+  /** @type {(value: number) => void} */
+  function setRating(value) {
+    rating = value;
+  }
 </script>
 
 {#if isOpen}
-  <div class="modal">
-    <div class="modal-content">
-      <h2>COURSE NAME</h2>
+<div class="modal">
+  <div class="modal-content">
+    <h2>{courseName}</h2>
 
       <div class="survey-question">
         <label>Difficulty:</label>
@@ -91,7 +91,7 @@ function setRating(value) {
     background: #fff;
     padding: 40px; 
     border-radius: 8px;
-    opacity: 0.82;
+    opacity: 0.9;
   }
 
   .survey-question {

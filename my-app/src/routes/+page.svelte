@@ -39,15 +39,23 @@
 	
 let showModal = false;
 
-function openModal() {
-  showModal = true;
-}
+  /** @type {string} */
+  let selectedCourseName = '';
+/**
+ * @param {string} courseName
+ */
+ function openModal(courseName) {
+    selectedCourseName = courseName;
+    showModal = true;
+  }
 
-  
-	function handleButtonClick() {
-	  openModal();
 
-	}
+  	/**
+	 * @param {Course} course
+	 */
+  function handleButtonClick(course) {
+    openModal(course.course_name);
+  }
   
 	/**
 	 * @param {Course} course
@@ -222,14 +230,14 @@ function openModal() {
 			  </div>
 			</div>
 		  </div>
-		  <button on:click={() => handleButtonClick()}>Rate</button>
+		  <button on:click={() => handleButtonClick(course)}>Rate</button>
 		</div>
 	  {/each}
 	{:else}
 	  <p class="no-courses">No courses available.</p>
 	{/if}
 
-	<Modal bind:isOpen={showModal} />
+	<Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} />
   
   </main>
   
