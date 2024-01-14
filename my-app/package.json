@@ -2,7 +2,7 @@
 	"name": "my-app",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "concurrently \"npm run client\" \"npm run server\"",
+		"dev": "concurrently \"npm run client\" \"npm run server\" \"npm run express\"",
 		"client": "vite dev",
 		"server": "node server.cjs",
 		"build": "vite build",

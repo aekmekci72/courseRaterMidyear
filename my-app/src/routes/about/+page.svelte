@@ -1,26 +1,173 @@
-<svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
-</svelte:head>
+  <script>
+	/**
+	 * @typedef {Object} Course
+	 * @property {number} course_id
+	 * @property {string} course_name
+	 * @property {number} teacher_id
+	 * @property {number} r1
+	 * @property {number} r2
+	 * @property {string} r3
+	 * @property {number} active
+	 * @property {string} description
+	 * @property {string} prereq
+	 */
+	
+	import { onMount } from 'svelte';
+	
+	/** @type {Array<Course>} */
+	let courses = [];
+	
+	
+	onMount(async () => {
+	  try {
+		const response = await fetch('http://localhost:3000/api/courses');
+		if (response.ok) {
+		  courses = await response.json();
+		} else {
+		  console.error('Failed to fetch courses:', response.statusText);
+		}
+	  } catch (error) {
+		console.error('Error fetching courses:', error);
+	  }
+	});
 
-<div class="text-column">
-	<h1>About this app</h1>
+	function handleButtonClick() {
+		console.log("Implement rating logic");
+	  }
 
-	<p>
-		This is a <a href="https://kit.svelte.dev">SvelteKit</a> app. You can make your own by typing the
-		following into your command line and following the prompts:
-	</p>
+  </script>
+  
+  <style>
+	@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
+	
+	:global(body) {
+	  background-color: #FFFBF6;
+	  font-family: 'EyesomeScript', sans-serif;
+	}
+	
+	@font-face {
+	  font-family: 'EyesomeScript';
+	  src: url('./EyesomeRegular.otf') format('opentype');
+	  font-weight: normal;
+	  font-style: normal;
+	}
+	
+	main {
+	  margin-top: 5rem;
+	  text-align: center;
+	}
+	
+	h1 {
+	  font-size: 4rem;
+	  color: #FE502D;
+	  margin-bottom: 4rem;
+	  font-family: 'Charmonman', cursive;
+	}
+	
 
-	<pre>npm create svelte@latest</pre>
+	.course-card {
+    background-color: #faf4f2;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left; /* Align text to the left within the card */
+  }
+	
+	.course-card:hover {
+	  transform: translateY(-5px); /* Lift the card slightly on hover */
+	}
+	
+	.course-name {
+	  font-size: 1.8rem;
+	  font-weight: bold;
+	  font-family: 'Indie Flower', cursive;
+	  color: #bf7e71; /* Darkened text color for better readability */
+	}
+	
+	.course-description {
+	  color: #B2A59B; /* Darkened text color for better readability */
+	  font-family: 'Indie Flower', cursive;
+	  font-size: 1.4rem;
+	}
+	
+	.no-courses {
+	  color: red;
+	  font-family: 'Indie Flower', cursive;
+	  font-size: 1.6rem;
+	}
+  </style>
+  
 
-	<p>
-		The page you're looking at is purely static HTML, with no client-side interactivity needed.
-		Because of that, we don't need to load any JavaScript. Try viewing the page's source, or opening
-		the devtools network panel and reloading.
-	</p>
-
-	<p>
-		The <a href="/sverdle">Sverdle</a> page illustrates SvelteKit's data loading and form handling. Try
-		using it with JavaScript disabled!
-	</p>
-</div>
+  <main class="container mx-auto">
+	<h1>My Courses</h1>
+  
+	{#if courses.length > 0}
+	  {#each courses as course (course.course_id)}
+		<div class="course-card">
+		  <div class="course-info">
+			<p class="course-name">Course: {course.course_name}</p>
+			<p class="course-description">{course.description}</p>
+		  </div>
+		  <button on:click={() => handleButtonClick()}>Rate Me</button>
+		</div>
+	  {/each}
+	{:else}
+	  <p class="no-courses">No courses available.</p>
+	{/if}
+  
+	<style>
+	  .course-card {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background-color: #faf4f2;
+		padding: 1.5rem;
+		border-radius: 0.25rem;
+		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+		margin-bottom: 2rem;
+		transition: transform 0.3s ease;
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: left; /* Align text to the left within the card */
+	  }
+  
+	  .course-card:hover {
+		transform: translateY(-5px); /* Lift the card slightly on hover */
+	  }
+  
+	  .course-name {
+		font-size: 1.8rem;
+		font-weight: bold;
+		font-family: 'Indie Flower', cursive;
+		color: #bf7e71; /* Darkened text color for better readability */
+	  }
+  
+	  .course-description {
+		color: #B2A59B; /* Darkened text color for better readability */
+		font-family: 'Indie Flower', cursive;
+		font-size: 1.4rem;
+	  }
+  
+	  .no-courses {
+		color: red;
+		font-family: 'Indie Flower', cursive;
+	  }
+  
+	  button {
+		background-color: #FE502D;
+		color: white;
+		padding: 0.5rem 1rem;
+		border: none;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-family: 'Indie Flower', cursive;
+	  }
+	</style>
+  </main>
+  
