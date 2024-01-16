@@ -1,7 +1,21 @@
 <!-- Navbar.svelte -->
 <script>
+  /**
+   * @typedef {string} StudentName
+   * @property {number} stu_id
+   * @property {string} stu_name_first
+   * @property {string} stu_name_last
+   * @property {string} stu_email
+   */
   import { getContext } from 'svelte';
-  import { onMount } from 'svelte';
+  import { onMount, afterUpdate, setContext } from 'svelte';
+
+  /** @type {StudentName} */
+  let studentName = '';
+  
+	onMount(async () => {
+    fetchStudentName();
+	});
 
   let currentRoute = '';
   let isNavbarOpen = false;
@@ -15,23 +29,42 @@
     const { pathname } = getContext('router');
     currentRoute = pathname;
 
-    // Check screen width on mount
-    checkScreenWidth();
-    
-    // Listen for window resize events
-    window.addEventListener('resize', checkScreenWidth);
-    
-    // Cleanup listener on component destruction
-    return () => {
-      window.removeEventListener('resize', checkScreenWidth);
-    };
+    // Fetch student name on mount
+    fetchStudentName();
+
   });
 
-  const checkScreenWidth = () => {
-    isSmallScreen = window.innerWidth <= 768; // Adjust the threshold as needed
+  afterUpdate(() => {
+    // Fetch student name after each update
+    fetchStudentName();
+  });
+
+
+  const fetchStudentName = async () => {
+    // Retrieve studentId from local storage
+    const studentId = localStorage.getItem('selectedStudentId');
+
+    if (studentId) {
+      try {
+        // Make a call to the getStunamebyid endpoint to fetch the student name
+        const response = await fetch(`http://localhost:3000/api/getStuNameById?studentId=${studentId}`);
+
+        if (response.ok) {
+          const data = await response.json();
+          studentName = data.studentName;
+        } else {
+          console.error('Failed to fetch student name:', response.statusText);
+          studentName = ''; // Set to empty string on error
+        }
+      } catch (error) {
+        console.error('Error fetching student name:', error);
+        studentName = ''; // Set to empty string on error
+      }
+    } else {
+      studentName = ''; // Reset studentName if no studentId in local storage
+    }
   };
 </script>
-
 
 
 <style>
@@ -110,9 +143,9 @@
 
 
 <div class="navbar">
-  <div class="logo">STUDENT NAME HERE</div>
+  <div class="logo">{studentName || 'STUDENT NAME HERE'}</div>
   <div class:nav-links={!isNavbarOpen} class:nav-links-closed={isNavbarOpen}>
-    <a href="/" class:active-link={currentRoute === '/'}>Home</a>
+    <a href="/Home" class:active-link={currentRoute === '/Home'}>Home</a>
     <a href="/Lookup" class:active-link={currentRoute === '/Lookup'}>Lookup</a>
     <a href="/Recs" class:active-link={currentRoute === '/Recs'}>Recs</a>
     <a href="/AboutUs" class:active-link={currentRoute === '/AboutUs'}>About Us</a>

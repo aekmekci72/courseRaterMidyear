@@ -104,7 +104,7 @@
   
 
   <main class="container mx-auto">
-	<h1>My Courses</h1>
+	<h1>Courses</h1>
   
 	{#if courses.length > 0}
 	  {#each courses as course (course.course_id)}
