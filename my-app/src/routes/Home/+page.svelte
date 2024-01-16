@@ -19,6 +19,8 @@
   
 	/** @type {Array<Course>} */
 	let courses = [];
+	let searchTerm = ''; 
+	$: filteredCourses = courses.filter(course => course.course_name.toLowerCase().includes(searchTerm.toLowerCase()));
   
 	/** @type {Course | null} */
 	let hoveredCourse = null;
@@ -216,8 +218,10 @@ let showModal = false;
   
 	<h1>My Courses</h1>
   
-	{#if courses.length > 0}
-	  {#each courses as course (course.course_id)}
+	<input type="text" bind:value={searchTerm} placeholder="Search by course name" />
+
+	{#if filteredCourses.length > 0}
+		{#each filteredCourses as course (course.course_id)}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
 		  <div class="course-info">

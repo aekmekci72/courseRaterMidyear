@@ -16,6 +16,11 @@
 	
 	/** @type {Array<Course>} */
 	let courses = [];
+
+
+	let searchTerm = ''; 
+	$: filteredCourses = courses.filter(course => course.course_name.toLowerCase().includes(searchTerm.toLowerCase()));
+
 	
 	
 	onMount(async () => {
@@ -34,6 +39,9 @@
 	function handleButtonClick() {
 		console.log("Implement rating logic");
 	  }
+
+
+	
 
   </script>
   
@@ -105,20 +113,22 @@
 
   <main class="container mx-auto">
 	<h1>Courses</h1>
-  
-	{#if courses.length > 0}
-	  {#each courses as course (course.course_id)}
-		<div class="course-card">
-		  <div class="course-info">
-			<p class="course-name">Course: {course.course_name}</p>
-			<p class="course-description">{course.description}</p>
-		  </div>
-		  <button on:click={() => handleButtonClick()}>Rate Me</button>
-		</div>
-	  {/each}
-	{:else}
-	  <p class="no-courses">No courses available.</p>
-	{/if}
+
+  <input type="text" bind:value={searchTerm} placeholder="Search by course name" />
+
+  {#if filteredCourses.length > 0}
+    {#each filteredCourses as course (course.course_id)}
+      <div class="course-card">
+        <div class="course-info">
+          <p class="course-name">{course.course_name}</p>
+          <p class="course-description">{course.description}</p>
+        </div>
+        <button on:click={() => handleButtonClick()}>Rate Me</button>
+      </div>
+    {/each}
+  {:else}
+    <p class="no-courses">No courses available.</p>
+  {/if}
   
 	<style>
 	  .course-card {
@@ -134,11 +144,11 @@
 		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
-		text-align: left; /* Align text to the left within the card */
+		text-align: left;
 	  }
   
 	  .course-card:hover {
-		transform: translateY(-5px); /* Lift the card slightly on hover */
+		transform: translateY(-5px); 
 	  }
   
 	  .course-name {
