@@ -15,7 +15,7 @@ import {error, json} from "@sveltejs/kit";export async function GET({url, locals
     authenticatedUser: session.user
   });
 }
-
+// 
 
 app.use(cors());
 
