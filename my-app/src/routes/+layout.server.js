@@ -1,17 +1,19 @@
 /**
- * @typedef {Object} Student
- * @property {string} propertyName - Description of the property.
- */
-
-/**
  * @typedef {Object} LoadResult
  * @property {any} session - Description of the session property.
  */
 
-/** @type {LoadResult} */
+/**
+ * @function
+ * @async
+ * @param {Object} event - Description of the event parameter.
+ * @returns {Promise<LoadResult>}
+ */
 export const load = async (event) => {
+    // Assuming 'event' has a property 'locals' with 'getSession' method
+    const locals = (event && event.locals) || {};
     return {
-      session: await event.locals.getSession(),
+      session: await locals.getSession(),
     };
   };
   
