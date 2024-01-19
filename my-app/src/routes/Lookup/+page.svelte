@@ -12,7 +12,9 @@
 	 * @property {string} prereq
 	 */
 	
-	import { onMount } from 'svelte';
+	 import { onMount } from 'svelte';
+	import Navbar from '../Navbar.svelte';
+	import Modal from '../Modal.svelte';
 	
 	/** @type {Array<Course>} */
 	let courses = [];
@@ -110,7 +112,7 @@
 	}
   </style>
   
-
+  <Navbar />
   <main class="container mx-auto">
 	<h1>Courses</h1>
 
