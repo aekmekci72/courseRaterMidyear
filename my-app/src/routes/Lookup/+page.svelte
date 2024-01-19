@@ -125,7 +125,6 @@
           <p class="course-name">{course.course_name}</p>
           <p class="course-description">{course.description}</p>
         </div>
-        <button on:click={() => handleButtonClick()}>Rate Me</button>
       </div>
     {/each}
   {:else}
