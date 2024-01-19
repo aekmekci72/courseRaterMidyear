@@ -19,8 +19,11 @@
   
 	/** @type {Array<Course>} */
 	let courses = [];
-	let searchTerm = ''; 
-	$: filteredCourses = courses.filter(course => course.course_name.toLowerCase().includes(searchTerm.toLowerCase()));
+	let searchTerm = '';
+$: filteredCourses = courses.filter(course => 
+    course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchTerm.toLowerCase())
+);
   
 	/** @type {Course | null} */
 	let hoveredCourse = null;
@@ -154,14 +157,12 @@ let showModal = false;
     align-items: center; /* Center align the ratings */
     position: relative;
     top: 0; /* Align with the top of the course card */
-    right: 0; /* Align with the right side of the course card */
+	left:-2.2rem;
     z-index: 1;
 	
     transform: translateY(10px); /* Set initial transform */
 
   }
-
-
 
   
 	.course-card:hover .rating-info {
@@ -169,18 +170,22 @@ let showModal = false;
 	}
   
 	.rating {
-    margin-bottom: 0.5rem;
-    text-align: center; /* Center align the rating labels and values */
-  }
+  margin-bottom: 0.5rem;
+  text-align: center;
+  width: 9rem; /* Set a fixed width for consistent spacing */
+
+}
   
 	.rating-label {
 	  font-size: 1.2rem;
 	  color: #FE502D;
+	  font-family: "Indie Flower", cursive;
 	}
   
 	.rating-value {
 	  font-size: 1.4rem;
 	  color: #bf7e71;
+	  font-family: "Indie Flower", cursive;
 	}
   
 	button {
@@ -193,7 +198,32 @@ let showModal = false;
 	  font-family: 'Indie Flower', cursive;
 	}
 
-	@media only screen and (max-width: 768px) {
+	.search {
+    padding: 0.5rem 0.5rem;
+	width: 50%; /* Set a specific width for the search bar */
+    border: 1px solid #B2A59B; /* Add a border for better visibility */
+    border-radius: 0.25rem;
+    margin: 2rem;
+    color: #B2A59B;
+    background-color: #F7F7F7; /* Add a background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+    transition: border-color 0.3s ease; /* Add a smooth transition for the border color */
+	font-family: 'Indie Flower', cursive;
+
+
+    /* Hover effect */
+    &:hover {
+        border-color: #FE502D; /* Change border color on hover */
+    }
+
+    /* Focus effect */
+    &:focus {
+        outline: none; /* Remove default focus outline */
+        border-color: #5E4B35; /* Change border color on focus */
+    }
+}
+
+@media only screen and (max-width: 768px) {
     /* Styles for screens with a maximum width of 768px (adjust as needed) */
 
     .course-card {
@@ -218,7 +248,7 @@ let showModal = false;
   
 	<h1>My Courses</h1>
   
-	<input type="text" bind:value={searchTerm} placeholder="Search by course name" />
+	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
 
 	{#if filteredCourses.length > 0}
 		{#each filteredCourses as course (course.course_id)}
@@ -231,17 +261,15 @@ let showModal = false;
 			  <div class="rating">
 				<p class="rating-label">Difficulty:</p>
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r1.toFixed(2) : ''}</p>
-			  </div>
+				</div>
 			  <div class="rating">
 				<p class="rating-label">Interest:</p>
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
-			  </div>
-			  <div class="rating">
+										  </div>
+			  <!-- <div class="rating">
 				<p class="rating-label">Teaching Style:</p>
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
-			  </div>
-			  <div class="rating">
-			  </div>
+			  </div> -->
 			</div>
 		  </div>
 		  <button on:click={() => handleButtonClick(course)}>Rate</button>

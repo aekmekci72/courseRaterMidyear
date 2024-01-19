@@ -105,6 +105,7 @@
 	}
   </style>
   
+  <Navbar/>
 
   <main class="container mx-auto">
 	

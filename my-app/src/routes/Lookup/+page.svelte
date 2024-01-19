@@ -12,8 +12,6 @@
 	 * @property {string} prereq
 	 */
 	
-	 import { onMount } from 'svelte';
-	import Navbar from '../Navbar.svelte';
 	import Modal from '../Modal.svelte';
 	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
@@ -24,7 +22,10 @@
 
 
 	let searchTerm = ''; 
-	$: filteredCourses = courses.filter(course => course.course_name.toLowerCase().includes(searchTerm.toLowerCase()));
+	$: filteredCourses = courses.filter(course => 
+    course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
 	
 	
@@ -113,13 +114,37 @@
 	  font-family: 'Indie Flower', cursive;
 	  font-size: 1.6rem;
 	}
+		.search {
+    padding: 0.5rem 0.5rem;
+	width: 50%; /* Set a specific width for the search bar */
+    border: 1px solid #B2A59B; /* Add a border for better visibility */
+    border-radius: 0.25rem;
+    margin: 2rem;
+    color: #B2A59B;
+    background-color: #F7F7F7; /* Add a background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+    transition: border-color 0.3s ease; /* Add a smooth transition for the border color */
+	font-family: 'Indie Flower', cursive;
+
+		}
+    /* Hover effect */
+    &:hover {
+        border-color: #FE502D; /* Change border color on hover */
+    }
+
+    /* Focus effect */
+    &:focus {
+        outline: none; /* Remove default focus outline */
+        border-color: #5E4B35; /* Change border color on focus */
+    }
+
   </style>
   
-
+<Navbar/>
   <main class="container mx-auto">
 	<h1>Lookup</h1>
 
-  <input type="text" bind:value={searchTerm} placeholder="Search by course name" />
+  <input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
 
   {#if filteredCourses.length > 0}
     {#each filteredCourses as course (course.course_id)}
