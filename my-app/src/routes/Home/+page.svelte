@@ -153,7 +153,6 @@ let showModal = false;
 	.rating-info {
     display: none;
     flex-direction: row; 
-	justify-content: space-between;
     align-items: center; /* Center align the ratings */
     position: relative;
     top: 0; /* Align with the top of the course card */
