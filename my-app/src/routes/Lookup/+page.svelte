@@ -13,6 +13,8 @@
 	 */
 	
 	import { onMount } from 'svelte';
+	import Navbar from '../Navbar.svelte';
+
 	
 	/** @type {Array<Course>} */
 	let courses = [];
@@ -110,9 +112,10 @@
 	}
   </style>
   
+  <Navbar />
 
   <main class="container mx-auto">
-	<h1>Courses</h1>
+	<h1>Lookup</h1>
 
   <input type="text" bind:value={searchTerm} placeholder="Search by course name" />
 

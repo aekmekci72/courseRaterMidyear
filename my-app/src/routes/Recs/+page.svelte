@@ -13,6 +13,8 @@
 	 */
 	
 	import { onMount } from 'svelte';
+	import Navbar from '../Navbar.svelte';
+
 	
 	/** @type {Array<Course>} */
 	let courses = [];
@@ -101,7 +103,8 @@
 	  font-size: 1.6rem;
 	}
   </style>
-  
+    <Navbar />
+
 
   <main class="container mx-auto">
   

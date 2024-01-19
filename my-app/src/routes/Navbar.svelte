@@ -143,7 +143,7 @@
 
 
 <div class="navbar">
-  <div class="logo">{studentName || 'STUDENT NAME HERE'}</div>
+  <div class="logo">{studentName || ''}</div>
   <div class:nav-links={!isNavbarOpen} class:nav-links-closed={isNavbarOpen}>
     <a href="/Home" class:active-link={currentRoute === '/Home'}>Home</a>
     <a href="/Lookup" class:active-link={currentRoute === '/Lookup'}>Lookup</a>
