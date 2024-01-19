@@ -10,11 +10,21 @@
     isOpen = false;
   }
 
-  let rating = 0;
+  let difficultyRating = 0;
+  let interestRating = 0;
+
 
   /** @type {(value: number) => void} */
-  function setRating(value) {
-    rating = value;
+  function setDifficultyRating(value) {
+    difficultyRating = value;
+  }
+    /** @type {(value: number) => void} */
+  function setInterestRating(value){
+    interestRating=value;
+  }
+
+  function submit(){
+    console.log("submit")
   }
 </script>
 
@@ -23,38 +33,37 @@
   <div class="modal-content">
     <h2>{courseName}</h2>
 
-      <div class="survey-question">
-        <label>Difficulty:</label>
-        <div class="star-rating">
-          <input type="radio" id="star1" name="rating1" value="1" />
-          <label for="star1" on:click={() => setRating(1)}><i class="fas fa-star" class:filled={rating >= 1}></i></label>
-          <input type="radio" id="star2" name="rating1" value="2" />
-          <label for="star2" on:click={() => setRating(2)}><i class="fas fa-star" class:filled={rating >= 2}></i></label>
-          <input type="radio" id="star3" name="rating1" value="3" />
-          <label for="star3" on:click={() => setRating(3)}><i class="fas fa-star" class:filled={rating >= 3}></i></label>
-          <input type="radio" id="star4" name="rating1" value="4" />
-          <label for="star4" on:click={() => setRating(4)}><i class="fas fa-star" class:filled={rating >= 4}></i></label>
-          <input type="radio" id="star5" name="rating1" value="5" />
-          <label for="star5" on:click={() => setRating(5)}><i class="fas fa-star" class:filled={rating >= 5}></i></label>
-                  </div>
+    <div class="survey-question">
+      <label>Difficulty:</label>
+      
+      <div class="star-rating">
+    
+      {#each [1, 2, 3, 4, 5] as starNumber}
+        <input type="radio" id={"difficultyStar"+starNumber} name="rating1" value={starNumber} bind:group={difficultyRating} />
+        <label for={"difficultyStar"+starNumber} on:click={() => setDifficultyRating(starNumber)}>
+          <i class="{difficultyRating >= starNumber ? 'fas' : 'far'} fa-star"></i> 
+        </label>
+      {/each}
+    
       </div>
-
-      <div class="survey-question">
-        <label>Interest:</label>
-        <div class="star-rating">
-          <input type="radio" id="star6" name="rating2" value="1" />
-          <label for="star6"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star7" name="rating2" value="2" />
-          <label for="star7"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star8" name="rating2" value="3" />
-          <label for="star8"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star9" name="rating2" value="4" />
-          <label for="star9"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star10" name="rating2" value="5" />
-          <label for="star10"><i class="fas fa-star"></i></label>
-        </div>
+    </div>
+    
+    <div class="survey-question">
+    
+      <label>Interest:</label>
+      
+      <div class="star-rating">
+    
+      {#each [6, 7, 8, 9, 10] as starNumber}
+        <input type="radio" id={"interestStar"+starNumber} name="rating2" value={starNumber - 5} bind:group={interestRating} />
+        <label for={"interestStar"+starNumber} on:click={() => setInterestRating(starNumber)}>
+          <i class="{interestRating >= (starNumber - 5) ? 'fas' : 'far'} fa-star"></i>
+        </label>
+      {/each}
+    
       </div>
-
+    
+    </div>        
       <div class="survey-question">
         <label>Teaching style:</label>
         <select>
@@ -69,7 +78,12 @@
         </select>
       </div>
 
-      <button on:click={closeModal}>Close Modal</button>
+      <button class="close-button" on:click={closeModal}>
+        <i class="fas fa-times"></i>
+      </button>
+    
+
+      <button on:click={submit}>Submit</button>
     </div>
   </div>
 {/if}
@@ -85,21 +99,41 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: "Indie Flower", cursive;
+    font-size: 1.2rem;
   }
 
   .modal-content {
+    position: relative;
     background: #fff;
-    padding: 40px; 
+    padding: 40px;
     border-radius: 8px;
-    opacity: 0.9;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 70%;
+    max-width: 400px;
+    color: #bf7e71;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
   }
 
   .survey-question {
     margin-bottom: 20px;
   }
 
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
   .star-rating {
     display: flex;
+    justify-content: center; 
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .star-rating input {
@@ -109,10 +143,50 @@
   .star-rating label {
     cursor: pointer;
     font-size: 24px; 
-        color: #ffd700; 
-  }
-
-  .star-rating input:checked ~ label {
     color: #ffd700; 
   }
+
+  .star-rating input:checked ~ label,
+  .star-rating label:hover {
+    color: #ffac33; /* a slightly darker shade when hovered or checked */
+  }
+
+  select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+
+  .close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #bf7e71;
+    padding: 0;
+  }
+
+  .close-button:hover {
+    color: #e98d7a;
+  }
+
+  button {
+    background-color: #FE502D;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+
+  
 </style>

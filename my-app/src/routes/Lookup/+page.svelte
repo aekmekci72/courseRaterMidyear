@@ -1,4 +1,4 @@
-  <script>
+<script>
 	/**
 	 * @typedef {Object} Course
 	 * @property {number} course_id
@@ -11,24 +11,26 @@
 	 * @property {string} description
 	 * @property {string} prereq
 	 */
-	
-	import Modal from '../Modal.svelte';
+  
+	import Modal from '../Modallookup.svelte';
 	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
-
-	
+  
 	/** @type {Array<Course>} */
 	let courses = [];
-
-
-	let searchTerm = ''; 
-	$: filteredCourses = courses.filter(course => 
-    course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.description.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
-	
-	
+	let searchTerm = '';
+	let showModal = false;
+/**
+ * @type {Course | null}
+ */
+ let selectedCourse = null;
+  
+	$: filteredCourses = courses.filter(
+	  (course) =>
+		course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+		course.description.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+  
 	onMount(async () => {
 	  try {
 		const response = await fetch('http://localhost:3000/api/courses');
@@ -41,16 +43,20 @@
 		console.error('Error fetching courses:', error);
 	  }
 	});
-
-	function handleButtonClick() {
-		console.log("Implement rating logic");
-	  }
-
-
-	
-
-  </script>
   
+	/**
+	 * @param {Course} course
+	 */
+	function handleButtonClick(course) {
+	  selectedCourse = course;
+	  openModal();
+	}
+  
+	function openModal() {
+	  showModal = true;
+	}
+  </script>
+	  
   <style>
 	@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
 	
@@ -140,25 +146,31 @@
 
   </style>
   
-<Navbar/>
+  <Navbar />
   <main class="container mx-auto">
 	<h1>Lookup</h1>
-
-  <input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
-
-  {#if filteredCourses.length > 0}
-    {#each filteredCourses as course (course.course_id)}
-      <div class="course-card">
-        <div class="course-info">
-          <p class="course-name">{course.course_name}</p>
-          <p class="course-description">{course.description}</p>
-        </div>
-      </div>
-    {/each}
-  {:else}
-    <p class="no-courses">No courses available.</p>
-  {/if}
   
+	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
+  
+	{#if filteredCourses.length > 0}
+	  {#each filteredCourses as course (course.course_id)}
+		<div class="course-card">
+		  <div class="course-info">
+			<p class="course-name">{course.course_name}</p>
+			<p class="course-description">{course.description}</p>
+		  </div>
+		  <button on:click={() => handleButtonClick(course)}>Learn More</button>
+		</div>
+	  {/each}
+	{:else}
+	  <p class="no-courses">No courses available.</p>
+	{/if}
+  
+	<!-- Modal -->
+  {#if showModal}
+    <Modal bind:isOpen={showModal} bind:course={selectedCourse} />
+  {/if}
+	
 	<style>
 	  .course-card {
 		display: flex;
