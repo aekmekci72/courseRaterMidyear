@@ -12,8 +12,9 @@
 	 * @property {string} prereq
 	 */
 	
-	import { onMount } from 'svelte';
+	 import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
+	import Modal from '../Modal.svelte';
 
 	
 	/** @type {Array<Course>} */
@@ -103,11 +104,10 @@
 	  font-size: 1.6rem;
 	}
   </style>
-    <Navbar />
-
+  
 
   <main class="container mx-auto">
-  
+	
 	{#if courses.length > 0}
 	  {#each courses as course (course.course_id)}
 		<div class="course-card">

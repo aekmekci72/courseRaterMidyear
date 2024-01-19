@@ -12,6 +12,9 @@
 	 * @property {string} prereq
 	 */
 	
+	 import { onMount } from 'svelte';
+	import Navbar from '../Navbar.svelte';
+	import Modal from '../Modal.svelte';
 	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
 
@@ -112,7 +115,6 @@
 	}
   </style>
   
-  <Navbar />
 
   <main class="container mx-auto">
 	<h1>Lookup</h1>
@@ -126,7 +128,6 @@
           <p class="course-name">{course.course_name}</p>
           <p class="course-description">{course.description}</p>
         </div>
-        <button on:click={() => handleButtonClick()}>Rate Me</button>
       </div>
     {/each}
   {:else}

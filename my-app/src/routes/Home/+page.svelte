@@ -237,6 +237,10 @@ let showModal = false;
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
 			  </div>
 			  <div class="rating">
+				<p class="rating-label">Teaching Style:</p>
+				<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
+			  </div>
+			  <div class="rating">
 			  </div>
 			</div>
 		  </div>
