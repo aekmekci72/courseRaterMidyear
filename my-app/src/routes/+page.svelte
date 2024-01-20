@@ -1,62 +1,167 @@
 <script>
 	/**
-	 * @typedef {Object} Student
+	 * @typedef {Object} Student 
 	 * @property {number} stu_id
 	 * @property {string} stu_name_first
 	 * @property {string} stu_name_last
 	 * @property {string} stu_email
+	 * @property {string} stu_pass
 	 */
-  
+	
 	import { onMount } from 'svelte';
-	import Navbar from './Navbar.svelte';
-	import Modal from './Modal.svelte';
-  
+	import { createEventDispatcher } from 'svelte';
+	
+	const dispatcher = createEventDispatcher();
+	
 	/** @type {Array<Student>} */
 	let students = [];
-  
+	
+	/** @type {Student | null} */ 
+	let loggedInUser = null;
+	
+	let username = '';
+	let password = '';
+	
+	let error = '';
+	
+	async function fetchStudents() {
+	  const response = await fetch('http://localhost:3000/api/students');
+	  if (response.ok) {
+		students = await response.json();
+	  } else {
+		console.error('Failed to fetch students'); 
+		throw new Error('Failed to fetch students');
+	  }
+	}
+	
 	onMount(async () => {
 	  try {
-		const response = await fetch('http://localhost:3000/api/students');
-		if (response.ok) {
-		  students = await response.json();
-		} else {
-		  console.error('Failed to fetch students:', response.statusText);
-		}
-	  } catch (error) {
-		console.error('Error fetching students:', error);
+		await fetchStudents();
+	  } catch (err) {
+		console.log(err)
 	  }
 	});
-  
-	/**
-	 * @param {number} studentId - The ID of the selected student
-	 */
-	function selectStudent(studentId) {
-	  // Save the selected student ID in local storage
-	  localStorage.setItem('selectedStudentId', (studentId.toString()));
-	  window.location.reload();
+	
+	async function login() {
+	  // Find user
+	  const user = students.find(
+		student => student.stu_email === username && student.stu_pass === password
+	  );
+	
+	  // Validate
+	  if (!user) {
+		error = 'Invalid username or password';
+		return;
+	  }
+	
+	  // Login user
+	  loggedInUser = user; 
+	  dispatcher('login', user); 
+	  error = '';
 	}
+	
+	function logout() {
+	  loggedInUser = null;
+	  dispatcher('logout');
+	}
+	
   </script>
   
   <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
+
+	.container {
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  height: 100vh;
+	  font-family: "Indie Flower", cursive;
+	}
   
-  </style>
+	form {
+	  max-width: 300px;
+	  margin: 0 auto;
+	  padding: 20px;
+	  border: 1px solid #ccc;
+	  border-radius: 5px;
+	  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
   
-  <Navbar />
+	label {
+	  display: block;
+	  margin-bottom: 5px;
+	}
   
-  <main class="container mx-auto">
+	input {
+	  width: 100%;
+	  padding: 8px;
+	  margin-bottom: 10px;
+	  box-sizing: border-box;
+	  border: 1px solid #ddd;
+	  border-radius: 3px;
+	}
   
-	<h1>Students</h1>
+	button {
+	  background-color: #FE502D;
+	  color: white;
+	  padding: 10px 15px;
+	  border: none;
+	  border-radius: 5px;
+	  cursor: pointer;
+	}
   
-	{#if students.length > 0}
-	  {#each students as student (student.stu_id)}
-		<div>
-		  <p>{student.stu_name_last}, {student.stu_name_first}: {student.stu_email}</p>
-		  <button on:click={() => selectStudent(student.stu_id)}>Select Student</button>
-		</div>
-	  {/each}
-	{:else}
-	  <p class="no-students">No students available.</p>
+	button:hover {
+	  background-color: #bf7e71;
+	}
+  
+	p {
+	  color: #ff0000;
+	}
+  
+	.err {
+		
+	}
+
+	@font-face {
+	  font-family: 'EyesomeScript';
+	  src: url('./EyesomeRegular.otf') format('opentype');
+	  font-weight: normal;
+	  font-style: normal;
+	}
+
+
+	h1 {
+	  font-size: 4rem;
+	  color: #FE502D;
+	  margin-bottom: 4rem;
+	  font-family: 'Charmonman', cursive;
+
+	}
+
+
+	</style>
+	<div class="container">
+		<h1>Login</h1>
+	{#if loggedInUser}
+	  {:else}
+	  <!-- login form -->
+	  <form on:submit|preventDefault={login}>
+		<label for="username">Username</label>
+		<input bind:value={username} id="username" />
+  
+		<label for="password">Password</label>
+		<input bind:value={password} id="password" type="password" />
+  
+		<button type="submit">Login</button>
+	  </form>
+  
+	  {#if error}
+	  <div>
+		<p class="err">{error}</p>
+		<button>Register</button>
+	</div>
+	  {/if}
 	{/if}
-  
-  </main>
+  </div>
   
