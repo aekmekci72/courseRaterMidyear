@@ -3,15 +3,20 @@
 
 <!-- Modal.svelte -->
 <script>
+  import { onMount } from 'svelte';
+
   export let isOpen = false;
   export let courseName = '';
-
+  export let studentId = '';
+  
+  
   function closeModal() {
     isOpen = false;
   }
 
   let difficultyRating = 0;
   let interestRating = 0;
+  let teachingStyle = '';
 
 
   /** @type {(value: number) => void} */
@@ -22,9 +27,44 @@
   function setInterestRating(value){
     interestRating=value;
   }
+  /** @type {(event: Event) => void} */
+    function setTeachingStyle(event) {
+      const selectElement = event.currentTarget;
+
+      if (selectElement instanceof HTMLSelectElement) {
+        teachingStyle = selectElement.value || '';
+      }
+    }
+
+
+
 
   function submit(){
-    console.log("submit")
+    const data = {
+      studentId,
+      courseName,
+      difficultyRating,
+      interestRating,
+      teachingStyle
+    };
+    console.log(data);
+
+    // Make a POST request to the server
+    fetch('http://localhost:3000/api/updateRatings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    closeModal();
   }
 </script>
 
@@ -64,19 +104,18 @@
       </div>
     
     </div>        
-      <div class="survey-question">
-        <label>Teaching style:</label>
-        <select>
-          <option value="option1">Slideshows</option>
-          <option value="option2">Lecture</option>
-          <option value="option3">Code Along</option>
-          <option value="option3">Interactive</option>
-          <option value="option3">Project Based</option>
-          <option value="option3">Worksheet heavy</option>
-          <option value="option3">Test heavy</option>
-          
-        </select>
-      </div>
+    <div class="survey-question">
+      <label>Teaching style:</label>
+      <select bind:value={teachingStyle} on:change={setTeachingStyle}>
+        <option value="Slideshows">Slideshows</option>
+        <option value="Lecture">Lecture</option>
+        <option value="Code Along">Code Along</option>
+        <option value="Interactive">Interactive</option>
+        <option value="Project Based">Project Based</option>
+        <option value="Worksheet Heavy">Worksheet Heavy</option>
+        <option value="Test Heavy">Test Heavy</option>
+      </select>
+    </div>
 
       <button class="close-button" on:click={closeModal}>
         <i class="fas fa-times"></i>

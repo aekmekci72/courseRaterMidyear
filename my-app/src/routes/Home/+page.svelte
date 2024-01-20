@@ -24,10 +24,12 @@ $: filteredCourses = courses.filter(course =>
     course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase())
 );
-  
+		
 	/** @type {Course | null} */
 	let hoveredCourse = null;
   
+
+
 	onMount(async () => {
 		const studentId = localStorage.getItem('selectedStudentId');
 		if (studentId) {
@@ -45,6 +47,7 @@ $: filteredCourses = courses.filter(course =>
 			}
 		}
 	});
+	
 
 	
 let showModal = false;
@@ -52,10 +55,15 @@ let showModal = false;
   /** @type {string} */
   let selectedCourseName = '';
 /**
- * @param {string} courseName
- */
- function openModal(courseName) {
+  /** @type {string | undefined} */
+  let selectedStudentId = '';
+/**
+   * @param {string} courseName
+   * @param {string | undefined} studentId
+   */
+ function openModal(courseName, studentId) {
     selectedCourseName = courseName;
+	selectedStudentId = studentId;
     showModal = true;
   }
 
@@ -64,7 +72,8 @@ let showModal = false;
 	 * @param {Course} course
 	 */
   function handleButtonClick(course) {
-    openModal(course.course_name);
+	const studentId = localStorage.getItem('selectedStudentId')
+    openModal(course.course_name, studentId||undefined);
   }
   
 	/**
@@ -278,7 +287,8 @@ let showModal = false;
 	  <p class="no-courses">No courses available.</p>
 	{/if}
 
-	<Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} />
-  
+	  
+	  <Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} bind:studentId={selectedStudentId} />
+		
   </main>
   

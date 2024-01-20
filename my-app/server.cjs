@@ -7,6 +7,8 @@ const PORT = process.env.PORT || 3000;
 
 // Enable CORS for all routes
 app.use(cors());
+app.use(express.json());
+
 
 console.log('Server file executed.');
 
@@ -107,6 +109,39 @@ app.get('/api/getStudentCourses', async (req, res) => {
   }
 });
 
+app.post('/api/updateRatings', async (req, res) => {
+
+  const {studentId, courseName, difficultyRating, interestRating, teachingStyle } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const updateQuery = `
+        UPDATE stuCourseXRef
+        SET r1 = ?, r2 = ?, r3 = ?
+        WHERE stu_id = ?
+          AND course_id = (SELECT course_id FROM course WHERE course_name = ?)
+      `;
+
+      const values = [difficultyRating, interestRating, teachingStyle, studentId, courseName];
+
+      const [result] = await connection.execute(updateQuery, values);
+
+      if (result.affectedRows > 0) {
+        console.log('Ratings updated successfully');
+        res.status(200).json({ message: 'Ratings updated successfully' });
+      } else {
+        res.status(404).json({ error: 'Student or course not found' });
+      }
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error updating ratings:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 app.listen(PORT, () => {
