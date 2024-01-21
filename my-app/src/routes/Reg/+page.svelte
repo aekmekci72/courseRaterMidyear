@@ -9,9 +9,16 @@
      */
   
     import { onMount } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
+	
+	  const dispatcher = createEventDispatcher();
+	
   
     /** @type {Array<Student>} */
     let students = [];
+    /** @type {Student | null} */ 
+    let loggedInUser = null;
+
   
     let firstName = '';
     let lastName = '';
@@ -37,44 +44,78 @@
     }
   
     onMount(fetchStudents);
+    async function login() {
+      try {
+        const response = await fetch('http://localhost:3000/api/students');
+        if (response.ok) {
+          students = await response.json();
+          console.log('SUCCESS');
+        } else {
+          console.error('Failed to fetch students');
+          throw new Error('Failed to fetch students');
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      const user = students.find(
+        student => student.stu_email === username && student.stu_pass === password
+      );
+
+    if (!user) {
+      error = 'Invalid username or password';
+      return;
+    }
+
+    loggedInUser = user; 
+    dispatcher('login', user); 
+    error = '';
+
+    localStorage.setItem('selectedStudentId', user.stu_id.toString());
+    const storedStudentId = localStorage.getItem('selectedStudentId');
+    window.location.href = ('./Home');
+  }
+
   
     async function register() {
-      // Validate inputs
-      if (!firstName || !lastName || !username || !password || !confirmPassword) {
-        error = 'Please fill in all fields';
-        return;
-      }
-  
-      // Check if passwords match
-      if (password !== confirmPassword) {
-        error = 'Passwords do not match';
-        return;
-      }
-  
-      // Prepare user data
-      const userData = {
-        stu_name_first: firstName,
-        stu_name_last: lastName,
-        stu_email: username,
-        stu_pass: password,
-};
+  if (!firstName || !lastName || !username || !password || !confirmPassword) {
+    error = 'Please fill in all fields';
+    return;
+  }
 
-    // Make a POST request to the server
-    fetch('http://localhost:3000/api/students', {
+  if (password !== confirmPassword) {
+    error = 'Passwords do not match';
+    return;
+  }
+
+  const userData = {
+    stu_name_first: firstName,
+    stu_name_last: lastName,
+    stu_email: username,
+    stu_pass: password,
+  };
+
+  try {
+    // Make a POST request to register the user
+    const response = await fetch('http://localhost:3000/api/students', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userData),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    });
+
+    if (response.ok) {
+      await login(); 
+    } else {
+      console.error('Failed to register user');
+      throw new Error('Failed to register user');
     }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+    
 </script>
   
   <style>
