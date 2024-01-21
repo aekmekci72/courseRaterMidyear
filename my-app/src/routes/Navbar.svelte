@@ -64,6 +64,30 @@
       studentName = ''; // Reset studentName if no studentId in local storage
     }
   };
+  const logout = () => {
+    const isConfirmed = window.confirm('Are you sure you want to log out?');
+
+    if (isConfirmed) {
+      localStorage.removeItem('selectedStudentId');
+      window.location.href = '/';
+    }
+  };
+
+  /** @type {HTMLElement | null} */
+  let studentNameElement;
+
+  $: {
+    if (studentNameElement && studentNameElement.addEventListener) {
+      studentNameElement.addEventListener('click', logout);
+    }
+  }
+
+  onMount(() => {
+    studentNameElement = document.getElementById('studentName');
+  });
+
+
+
 </script>
 
 
@@ -143,7 +167,7 @@
 
 
 <div class="navbar">
-  <div class="logo">{studentName || ''}</div>
+  <div class="logo" bind:this={studentNameElement} id="studentName">{studentName || ''}</div>
   <div class:nav-links={!isNavbarOpen} class:nav-links-closed={isNavbarOpen}>
     <a href="/Home" class:active-link={currentRoute === '/Home'}>Home</a>
     <a href="/Lookup" class:active-link={currentRoute === '/Lookup'}>Lookup</a>
