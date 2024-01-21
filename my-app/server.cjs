@@ -143,6 +143,37 @@ app.post('/api/updateRatings', async (req, res) => {
   }
 });
 
+app.post('/api/students', async (req, res) => {
+  const { stu_name_first, stu_name_last, stu_email, stu_pass } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const insertQuery = `
+        INSERT INTO student (stu_name_first, stu_name_last, stu_email, stu_pass)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      const values = [stu_name_first, stu_name_last, stu_email, stu_pass];
+
+      const [result] = await connection.execute(insertQuery, values);
+
+      if (result.affectedRows > 0) {
+        console.log('Student registration successful');
+        res.status(201).json({ message: 'Student registration successful' });
+      } else {
+        res.status(500).json({ error: 'Failed to register student' });
+      }
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error registering student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -58,6 +58,9 @@
 	  loggedInUser = user; 
 	  dispatcher('login', user); 
 	  error = '';
+
+	  localStorage.setItem('selectedStudentId', user.stu_id.toString());
+	  window.location.href = ('./Home');
 	}
 	
 	function logout() {
@@ -142,10 +145,9 @@
 
 	</style>
 	<div class="container">
-		<h1>Login</h1>
 	{#if loggedInUser}
 	  {:else}
-	  <!-- login form -->
+	  <h1>Login</h1>
 	  <form on:submit|preventDefault={login}>
 		<label for="username">Username</label>
 		<input bind:value={username} id="username" />
@@ -155,11 +157,11 @@
   
 		<button type="submit">Login</button>
 	  </form>
+	  <p><a href="./Reg">Register</a></p>
   
 	  {#if error}
 	  <div>
 		<p class="err">{error}</p>
-		<button>Register</button>
 	</div>
 	  {/if}
 	{/if}
