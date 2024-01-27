@@ -75,15 +75,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
 
 	.container {
-	  display: flex;
-	  justify-content: center;
-	  align-items: center;
-	  height: 100vh;
+	  /* display: flex; */
+	  /* justify-content: center; */
+	  /*align-items: center;*/
 	  font-family: "Indie Flower", cursive;
 	}
   
 	form {
 	  max-width: 300px;
+	  align-items: right;
+	  align-content: right;
+	  align-self: right;
 	  margin: 0 auto;
 	  padding: 20px;
 	  border: 1px solid #ccc;
@@ -134,20 +136,32 @@
 	}
 
 
-	h1 {
-	  font-size: 4rem;
+	.reg{
+		font-size: 4rem;
+	  color: #FE502D;
+	  margin-bottom: 4rem;
+	  font-family: 'Charmonman', cursive;
+	  text-align: right;
+
+
+	}
+
+	.log{
+		font-size: 4rem;
 	  color: #FE502D;
 	  margin-bottom: 4rem;
 	  font-family: 'Charmonman', cursive;
 
+		text-align: center;
 	}
 
 
 	</style>
+		  <h1 class="log">Rec Deck</h1>
+
 	<div class="container">
 	{#if loggedInUser}
 	  {:else}
-	  <h1>Login</h1>
 	  <form on:submit|preventDefault={login}>
 		<label for="username">Username</label>
 		<input bind:value={username} id="username" />
@@ -157,7 +171,6 @@
   
 		<button type="submit">Login</button>
 	  </form>
-	  <p><a href="./Reg">Register</a></p>
   
 	  {#if error}
 	  <div>
@@ -166,4 +179,6 @@
 	  {/if}
 	{/if}
   </div>
+  <h1 class="reg"><a href="./Reg">Register</a></h1>
+
   
