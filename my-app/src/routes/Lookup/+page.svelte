@@ -10,6 +10,8 @@
 	 * @property {number} active
 	 * @property {string} description
 	 * @property {string} prereq
+	 * @property {string} tags
+	 * 
 	 */
   
 	import Modal from '../Modallookup.svelte';
@@ -20,29 +22,58 @@
 	let courses = [];
 	let searchTerm = '';
 	let showModal = false;
+
+/** @type {Array<string>} */
+	let uniqueTags = [];
+
+/** @type {Array<string>} */
+let selectedTags = [];
+	
 /**
  * @type {Course | null}
  */
  let selectedCourse = null;
   
-	$: filteredCourses = courses.filter(
-	  (course) =>
-		course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		course.description.toLowerCase().includes(searchTerm.toLowerCase())
-	);
+ $: filteredCourses = courses.filter(
+    (course) =>
+      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedTags.length === 0 ||
+        selectedTags.every((tag) => course.tags.includes(tag)))
+  );
   
 	onMount(async () => {
-	  try {
-		const response = await fetch('http://localhost:3000/api/courses');
-		if (response.ok) {
-		  courses = await response.json();
-		} else {
-		  console.error('Failed to fetch courses:', response.statusText);
+		try {
+			const response = await fetch('http://localhost:3000/api/courses');
+			if (response.ok) {
+			courses = await response.json();
+
+			uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
+			} else {
+			console.error('Failed to fetch courses:', response.statusText);
+			}
+		} catch (error) {
+			console.error('Error fetching courses:', error);
 		}
-	  } catch (error) {
-		console.error('Error fetching courses:', error);
-	  }
-	});
+		});
+
+
+  /**
+	 * @param {string | null} tag
+	 */
+  function handleTagSelect(tag) {
+    if (tag !== null) {
+		if (!selectedTags.includes(tag)) {
+		selectedTags = [...selectedTags, tag];
+		}
+	}
+  }
+	/**
+	 * @param {string} tag
+	 */
+  function removeTag(tag) {
+    selectedTags = selectedTags.filter((t) => t !== tag);
+  }
+
   
 	/**
 	 * @param {Course} course
@@ -149,6 +180,21 @@
   <Navbar />
   <main class="container mx-auto">
 	<h1>Lookup</h1>
+	<div class="tag-filter">
+		<label for="tag-dropdown">Filter by Tags:</label>
+		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
+			<option value="" disabled selected>Select Tag</option>
+		  {#each uniqueTags as tag}
+			<option value={tag}>{tag}</option>
+		  {/each}
+		</select>
+		{#each selectedTags as tag}
+		  <div class="tag-tab">
+			{tag}
+			<button on:click={() => removeTag(tag)}>x</button>
+		  </div>
+		{/each}
+	  </div>
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
   

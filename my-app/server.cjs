@@ -17,7 +17,13 @@ app.get('/api/courses', async (req, res) => {
     const connection = await createConnection();
 
     try {
-      const [rows] = await connection.execute('SELECT * FROM course');
+      const [rows] = await connection.execute(`
+        SELECT course.*, GROUP_CONCAT(tag) AS tags
+        FROM course
+        LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+        GROUP BY course.course_id
+      `);
+
       console.log(rows);
       res.json(rows);
     } finally {
@@ -28,6 +34,7 @@ app.get('/api/courses', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.get('/api/students', async (req, res) => {
   try {
@@ -171,6 +178,30 @@ app.post('/api/students', async (req, res) => {
   } catch (error) {
     console.error('Error registering student:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/api/getCourseTags', async (req, res) => {
+  const { courseIds } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [rows] = await connection.query(`
+        SELECT course_id, tag_name
+        FROM tagCourseXRef
+        WHERE course_id IN (?)
+      `, [courseIds]);
+
+      res.json(rows);
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error fetching course tags:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
