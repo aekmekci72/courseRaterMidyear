@@ -87,6 +87,18 @@
     return;
   }
 
+  const isUsernameTaken = students.some(student => student.stu_email === username);
+
+  if (isUsernameTaken) {
+    error = 'Username (email) is already taken';
+    return;
+  }
+
+  if (password.length < 8 || !/[A-Z]/.test(password)) {
+    error = 'Password must be at least 8 characters long and contain at least one uppercase letter';
+    return;
+  }
+
   const userData = {
     stu_name_first: firstName,
     stu_name_last: lastName,
@@ -118,48 +130,67 @@
     
 </script>
   
-  <style>
+<style>
+  .container {
+    max-width: 400px;
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    font-family: 'Indie Flower', cursive;
+
+  }
+
   
-    .container {
-      max-width: 400px;
-      margin: auto;
-    }
+  @font-face {
+	  font-family: 'EyesomeScript';
+	  src: url('./EyesomeRegular.otf') format('opentype');
+	  font-weight: normal;
+	  font-style: normal;
+	}
   
-    h1 {
-      text-align: center;
-      color: #fe502d;
-    }
-  
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-  
-    label {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  
-    input {
-      margin-bottom: 15px;
-      padding: 8px;
-      font-size: 16px;
-    }
-  
-    button {
-      background-color: #fe502d;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-  
-    .err {
-      color: #fe502d;
-    }
-  </style>
+h1 {
+    color: #fe502d;
+    font-family: 'Charmonman', cursive;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  input {
+    margin-bottom: 15px;
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  button {
+    background-color: #fe502d;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .err {
+    color: #fe502d;
+  }
+</style>
   
   <div class="container">
     <h1>Registration</h1>
