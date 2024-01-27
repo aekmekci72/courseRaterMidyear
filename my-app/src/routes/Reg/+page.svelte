@@ -131,10 +131,32 @@
 </script>
   
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
+
+  :global(body) {
+    background-color: #FFFBF6;
+    font-family: 'EyesomeScript', sans-serif;
+  }
+
+  @font-face {
+    font-family: 'EyesomeScript';
+    src: url('./EyesomeRegular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .title {
+    color: #fe502d;
+    font-family: 'Charmonman', cursive;
+    text-align: center;
+    font-size: 5rem;
+    margin-top: 4%;
+  }
+
   .container {
-    max-width: 400px;
+    max-width: 40%;
     margin: auto;
-    margin-top: 5%;
+    margin-top: 2%;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
@@ -145,20 +167,8 @@
     align-items: center;
     align-self: center;
     font-family: 'Indie Flower', cursive;
-
-  }
-
-  
-  @font-face {
-	  font-family: 'EyesomeScript';
-	  src: url('./EyesomeRegular.otf') format('opentype');
-	  font-weight: normal;
-	  font-style: normal;
-	}
-  
-h1 {
-    color: #fe502d;
-    font-family: 'Charmonman', cursive;
+    background-color: #F3EEEA;
+    margin-bottom: 2%;
   }
 
   form {
@@ -168,19 +178,20 @@ h1 {
 
   label {
     margin-top: 10px;
-    font-weight: bold;
   }
 
   input {
     margin-bottom: 15px;
-    padding: 8px;
+    padding: 10px;
     font-size: 16px;
+    border: 1px solid #D0D4CA;
+    border-radius: 4px;
   }
 
   button {
     background-color: #fe502d;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -189,34 +200,35 @@ h1 {
 
   .err {
     color: #fe502d;
+    margin-top: 10px;
   }
 </style>
-  
-  <div class="container">
-    <h1>Registration</h1>
-    <form on:submit|preventDefault={register}>
-      <label for="firstName">First Name</label>
-      <input bind:value={firstName} id="firstName" />
-  
-      <label for="lastName">Last Name</label>
-      <input bind:value={lastName} id="lastName" />
-  
-      <label for="username">Username</label>
-      <input bind:value={username} id="username" />
-  
-      <label for="password">Password</label>
-      <input bind:value={password} id="password" type="password" />
-  
-      <label for="confirmPassword">Confirm Password</label>
-      <input bind:value={confirmPassword} id="confirmPassword" type="password" />
-  
-      <button type="submit">Register</button>
-    </form>
-  
-    {#if error}
-      <div>
-        <p class="err">{error}</p>
-      </div>
-    {/if}
-  </div>
-  
+
+<h1 class="title">Registration</h1>
+
+<div class="container">
+  <form on:submit|preventDefault={register}>
+    <label for="firstName">First Name</label>
+    <input bind:value={firstName} id="firstName" />
+
+    <label for="lastName">Last Name</label>
+    <input bind:value={lastName} id="lastName" />
+
+    <label for="username">Username</label>
+    <input bind:value={username} id="username" />
+
+    <label for="password">Password</label>
+    <input bind:value={password} id="password" type="password" />
+
+    <label for="confirmPassword">Confirm Password</label>
+    <input bind:value={confirmPassword} id="confirmPassword" type="password" />
+
+    <button type="submit">Register</button>
+  </form>
+
+  {#if error}
+    <div>
+      <p class="err">{error}</p>
+    </div>
+  {/if}
+</div>

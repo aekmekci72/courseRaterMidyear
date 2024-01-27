@@ -10,6 +10,9 @@
 	
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
+
+	import book from './book.png';
+
 	
 	const dispatcher = createEventDispatcher();
 	
@@ -69,63 +72,12 @@
 	}
 	
   </script>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
   
-  <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
-
-	.container {
-	  /* display: flex; */
-	  /* justify-content: center; */
-	  /*align-items: center;*/
-	  font-family: "Indie Flower", cursive;
-	}
-  
-	form {
-	  max-width: 300px;
-	  align-items: right;
-	  align-content: right;
-	  align-self: right;
-	  margin: 0 auto;
-	  padding: 20px;
-	  border: 1px solid #ccc;
-	  border-radius: 5px;
-	  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	}
-  
-	label {
-	  display: block;
-	  margin-bottom: 5px;
-	}
-  
-	input {
-	  width: 100%;
-	  padding: 8px;
-	  margin-bottom: 10px;
-	  box-sizing: border-box;
-	  border: 1px solid #ddd;
-	  border-radius: 3px;
-	}
-  
-	button {
-	  background-color: #FE502D;
-	  color: white;
-	  padding: 10px 15px;
-	  border: none;
-	  border-radius: 5px;
-	  cursor: pointer;
-	}
-  
-	button:hover {
-	  background-color: #bf7e71;
-	}
-  
-	p {
-	  color: #ff0000;
-	}
-  
-	.err {
-		
+	:global(body) {
+	  background-color: #FFFBF6;
+	  font-family: 'EyesomeScript', sans-serif;
 	}
 
 	@font-face {
@@ -135,50 +87,151 @@
 	  font-style: normal;
 	}
 
-
-	.reg{
-		font-size: 4rem;
+  
+	h1.log {
+		font-family: 'Charmonman', cursive;
+	  text-align: center;
+	  font-size: 6rem;
+	  margin-top: 6%;
 	  color: #FE502D;
-	  margin-bottom: 4rem;
-	  font-family: 'Charmonman', cursive;
-	  text-align: right;
-
+	}
+  
+	.header-container {
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  flex-direction: column;
+	}
+  
+	.full-container {
+	  background-color: #FFFBF6;
+	}
+  
+	img.books-image {
+	  width: 200px;
+	}
+  
+	.container {
+	  max-width:50%;
+	  margin: 5% auto;
+	  padding: 2%;
+	  border: 1px solid #F3EEEA;
+	  border-radius: 5px;
+	  background-color: #F3EEEA;
+	  font-family: 'Indie Flower', cursive;
+	}
+  
+	form {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	}
+  
+	label {
+	  margin-bottom: 5px;
+	}
+  
+	input {
+	  padding: 8px;
+	  border: 1px solid #ccc;
+	  border-radius: 3px;
+	}
+  
+	button {
+	margin-top: 2%;
+	  padding: 10px;
+	  background-color: #FE502D;
+	  color: #fff;
+	  border: none;
+	  border-radius: 3px;
+	  cursor: pointer;
+	}
+  
+	button:hover {
+	  background-color: #FE502D;
+	}
+  
+	.err {
+	  color: #dc3545;
+	  margin-top: 2%;
+	  text-align: center;
 
 	}
-
-	.log{
-		font-size: 4rem;
+  
+	p.reg {
+		margin-top: -3%;
+	  text-align: center;
+	  font-weight: bold;
+	  font-size: 1.5rem;
+	  font-family: 'Indie Flower', cursive;
+	}
+  
+	a {
 	  color: #FE502D;
-	  margin-bottom: 4rem;
-	  font-family: 'Charmonman', cursive;
-
-		text-align: center;
+	  text-decoration: none;
+	}
+  
+	a:hover {
+	  text-decoration: underline;
+	}
+  
+	.content-container {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
 	}
 
+	.full-container {
+    background-color: #FFFBF6;
+    padding: 2%;
+  }
 
-	</style>
-		  <h1 class="log">Rec Deck</h1>
+  .log {
+    font-size: 4rem; 
+    margin-top: 3%; 
+  }
 
-	<div class="container">
-	{#if loggedInUser}
-	  {:else}
-	  <form on:submit|preventDefault={login}>
-		<label for="username">Username</label>
-		<input bind:value={username} id="username" />
+  .container {
+    max-width: 80%;
+    margin: 5% auto;
+    padding: 4%;
+    border: 1px solid #F3EEEA;
+    border-radius: 5px;
+    background-color: #F3EEEA;
+    font-family: 'Indie Flower', cursive;
+  }
+
+  </style>
   
-		<label for="password">Password</label>
-		<input bind:value={password} id="password" type="password" />
-  
-		<button type="submit">Login</button>
-	  </form>
-  
-	  {#if error}
-	  <div>
-		<p class="err">{error}</p>
+  <div class="full-container">
+	<div class="header-container">
+	  <h1 class="log">Rec Deck</h1>
 	</div>
-	  {/if}
-	{/if}
+	
+	<div class="content-container">
+	  <div class="container">
+		{#if loggedInUser}
+		  <button on:click={logout}>Logout</button>
+		{:else}
+		  <form on:submit|preventDefault={login}>
+			<label for="username">Username</label>
+			<input bind:value={username} id="username" />
+  
+			<label for="password">Password</label>
+			<input bind:value={password} id="password" type="password" />
+  
+			<button type="submit">Login</button>
+		  </form>
+  
+		  {#if error}
+			<div>
+			  <p class="err">{error}</p>
+			</div>
+		  {/if}
+		{/if}
+	  </div>
+	</div>
+	
+	<p class="reg"><a href="./Reg">Register</a></p>
   </div>
-  <h1 class="reg"><a href="./Reg">Register</a></h1>
-
   
