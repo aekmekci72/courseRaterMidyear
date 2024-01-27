@@ -7,6 +7,8 @@
 	 * @property {string} stu_email
 	 * @property {string} stu_pass
 	 */
+
+	 
 	
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -70,6 +72,7 @@
 	  loggedInUser = null;
 	  dispatcher('logout');
 	}
+	
 	
   </script>
 <style>

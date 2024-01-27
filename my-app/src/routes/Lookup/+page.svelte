@@ -41,20 +41,29 @@ let selectedTags = [];
         selectedTags.every((tag) => course.tags.includes(tag)))
   );
   
-	onMount(async () => {
-		try {
-			const response = await fetch('http://localhost:3000/api/courses');
-			if (response.ok) {
-			courses = await response.json();
+  onMount(async () => {
+    const studentId = localStorage.getItem('selectedStudentId');
 
-			uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
-			} else {
-			console.error('Failed to fetch courses:', response.statusText);
-			}
-		} catch (error) {
-			console.error('Error fetching courses:', error);
-		}
-		});
+    // Check if the user is not logged in, redirect to login
+    if (!studentId) {
+      window.location.href = './';
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/courses');
+
+      if (response.ok) {
+        courses = await response.json();
+
+        uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
+      } else {
+        console.error('Failed to fetch courses:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  });
 
 
   /**

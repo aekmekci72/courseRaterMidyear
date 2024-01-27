@@ -22,17 +22,26 @@
 	
 	
 	onMount(async () => {
-	  try {
-		const response = await fetch('http://localhost:3000/api/courses');
-		if (response.ok) {
-		  courses = await response.json();
-		} else {
-		  console.error('Failed to fetch courses:', response.statusText);
-		}
-	  } catch (error) {
-		console.error('Error fetching courses:', error);
-	  }
-	});
+    const studentId = localStorage.getItem('selectedStudentId');
+
+    // Check if the user is not logged in, redirect to login
+    if (!studentId) {
+      window.location.href = './';
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/courses');
+
+      if (response.ok) {
+        courses = await response.json();
+      } else {
+        console.error('Failed to fetch courses:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  });
 
 	function handleButtonClick() {
 		console.log("Implement rating logic");
