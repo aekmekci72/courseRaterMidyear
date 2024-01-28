@@ -95,7 +95,7 @@
 		font-family: 'Charmonman', cursive;
 	  text-align: center;
 	  font-size: 6rem;
-	  margin-top: 6%;
+	  margin-top: 3rem;
 	  color: #FE502D;
 	}
   
@@ -116,7 +116,7 @@
   
 	.container {
 	  max-width:50%;
-	  margin: 5% auto;
+	  margin: auto;
 	  padding: 2%;
 	  border: 1px solid #F3EEEA;
 	  border-radius: 5px;
@@ -125,31 +125,34 @@
 	}
   
 	form {
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+
   
-	label {
-	  margin-bottom: 5px;
-	}
-  
-	input {
-	  padding: 8px;
-	  border: 1px solid #ccc;
-	  border-radius: 3px;
-	}
-  
-	button {
-	margin-top: 2%;
-	  padding: 10px;
-	  background-color: #FE502D;
-	  color: #fff;
-	  border: none;
-	  border-radius: 3px;
-	  cursor: pointer;
-	}
-  
+  label {
+    margin-bottom: 10px; /* Increase margin for better separation */
+  }
+  input {
+    width: 50%; /* Make input fields take up the full width of the container */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+    padding: 10px;
+    margin-bottom: 15px; /* Increase margin for better separation */
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+
+  button {
+    margin-top: 20px; /* Increase margin for better separation */
+    padding: 12px;
+    background-color: #FE502D;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
 	button:hover {
 	  background-color: #FE502D;
 	}

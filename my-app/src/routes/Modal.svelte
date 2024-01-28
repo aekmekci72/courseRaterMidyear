@@ -8,8 +8,7 @@
   export let isOpen = false;
   export let courseName = '';
   export let studentId = '';
-  
-  
+
   function closeModal() {
     isOpen = false;
   }
@@ -18,36 +17,33 @@
   let interestRating = 0;
   let teachingStyle = '';
 
-
   /** @type {(value: number) => void} */
   function setDifficultyRating(value) {
     difficultyRating = value;
   }
-    /** @type {(value: number) => void} */
-  function setInterestRating(value){
-    interestRating=value;
+
+  /** @type {(value: number) => void} */
+  function setInterestRating(value) {
+    interestRating = value;
   }
+
   /** @type {(event: Event) => void} */
-    function setTeachingStyle(event) {
-      const selectElement = event.currentTarget;
+  function setTeachingStyle(event) {
+    const selectElement = event.currentTarget;
 
-      if (selectElement instanceof HTMLSelectElement) {
-        teachingStyle = selectElement.value || '';
-      }
+    if (selectElement instanceof HTMLSelectElement) {
+      teachingStyle = selectElement.value || '';
     }
+  }
 
-
-
-
-  function submit(){
+  function submit() {
     const data = {
       studentId,
       courseName,
       difficultyRating,
       interestRating,
-      teachingStyle
+      teachingStyle,
     };
-    console.log(data);
 
     // Make a POST request to the server
     fetch('http://localhost:3000/api/updateRatings', {
@@ -60,13 +56,19 @@
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
+
+        // Store the timestamp in localStorage
+        const timestamp = new Date().toISOString();
+        localStorage.setItem('lastRatingTimestamp', timestamp);
+
+        closeModal();
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-    closeModal();
   }
 </script>
+
 
 {#if isOpen}
 <div class="modal">

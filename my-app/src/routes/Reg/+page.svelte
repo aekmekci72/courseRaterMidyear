@@ -87,17 +87,20 @@
     return;
   }
 
-  const isUsernameTaken = students.some(student => student.stu_email === username);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(username)) {
+      error = 'Invalid email format';
+      return;
+    }
 
-  if (isUsernameTaken) {
-    error = 'Username (email) is already taken';
-    return;
-  }
+    // Extract domain from the email
+    const [, domain] = username.split('@');
 
-  if (password.length < 8 || !/[A-Z]/.test(password)) {
-    error = 'Password must be at least 8 characters long and contain at least one uppercase letter';
-    return;
-  }
+    // Check if the email domain exists (you may need to implement this check on the server)
+    if (domain!="bergen.org") {
+      error = 'Invalid email domain';
+      return;
+    }
 
   const userData = {
     stu_name_first: firstName,
@@ -150,7 +153,8 @@
     font-family: 'Charmonman', cursive;
     text-align: center;
     font-size: 5rem;
-    margin-top: 4%;
+	  margin-top: 3rem;
+
   }
 
   .container {
@@ -174,6 +178,7 @@
   form {
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
 
   label {
@@ -181,6 +186,8 @@
   }
 
   input {
+    width: 100%; /* Make input fields take up the full width of the container */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
     margin-bottom: 15px;
     padding: 10px;
     font-size: 16px;
@@ -189,9 +196,11 @@
   }
 
   button {
+    width: 100%; /* Make the button take up the full width of the container */
+    margin-top: 20px;
+    padding: 12px;
     background-color: #fe502d;
     color: white;
-    padding: 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;

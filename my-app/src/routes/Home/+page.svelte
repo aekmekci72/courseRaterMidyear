@@ -27,32 +27,46 @@ $: filteredCourses = courses.filter(course =>
 		
 	/** @type {Course | null} */
 	let hoveredCourse = null;
+
+
+
+	let showAlert = false;
   
 
 
 	onMount(async () => {
-    const studentId = localStorage.getItem('selectedStudentId');
+  const studentId = localStorage.getItem('selectedStudentId');
 
-    // Check if the user is not logged in, redirect to login
-    if (!studentId) {
-      window.location.href = './';
-      return;
-    }
+  if (!studentId) {
+    window.location.href = './';
+    return;
+  }
 
-    try {
-      const response = await fetch(`http://localhost:3000/api/getStudentCourses?studentId=${studentId}`);
+  try {
+    const response = await fetch(`http://localhost:3000/api/getStudentCourses?studentId=${studentId}`);
 
-      if (response.ok) {
-        courses = await response.json();
-      } else {
-        console.error('Failed to fetch courses:', response.statusText);
+    if (response.ok) {
+      courses = await response.json();
+
+	  const lastRatingTimestamp = localStorage.getItem('lastRatingTimestamp');
+        const twoWeeksAgo = new Date(Date.now() - 2 * 7 * 24 * 60 * 60 * 1000); // Two weeks ago
+
+        if (!lastRatingTimestamp || new Date(lastRatingTimestamp) < twoWeeksAgo) {
+          showAlert = true;
+
+        setTimeout(() => {
+          showAlert = false;
+        }, 3000);
       }
-    } catch (error) {
-      console.error('Error fetching courses:', error);
+    } else {
+      console.error('Failed to fetch courses:', response.statusText);
     }
-  });
-	
-let showModal = false;
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+  }
+});
+
+  let showModal = false;
 
   /** @type {string} */
   let selectedCourseName = '';
@@ -89,7 +103,13 @@ let showModal = false;
 	  hoveredCourse = null;
 	}
 
-  </script>
+</script>
+
+{#if showAlert}
+<script>
+  alert("Rate your courses...did you opinions change?");
+</script>
+{/if}
   
   <style>
 	@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');

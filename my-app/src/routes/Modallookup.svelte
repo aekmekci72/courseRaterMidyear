@@ -83,7 +83,10 @@ onMount(async () => {
     function submit() {
       console.log("submit");
     }
-  </script>
+
+
+
+</script>
   
   {#if isOpen}
   <div class="modal">
