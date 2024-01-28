@@ -174,21 +174,24 @@ app.post('/api/updateRatings', async (req, res) => {
 });
 
 app.post('/api/students', async (req, res) => {
-  const { stu_name_first, stu_name_last, stu_email, stu_pass } = req.body;
+  const { stu_name_first, stu_name_last, stu_email, stu_pass, stu_academy, stu_grade } = req.body;
 
+  // Ensure stu_grade is parsed as an integer
+  const parsedGrade = parseInt(stu_grade, 10);
+  
   try {
     const connection = await createConnection();
-
+  
     try {
       const insertQuery = `
-        INSERT INTO student (stu_name_first, stu_name_last, stu_email, stu_pass)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO student (stu_name_first, stu_name_last, stu_email, stu_pass, stu_academy, stu_grade)
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
-
-      const values = [stu_name_first, stu_name_last, stu_email, stu_pass];
-
+  
+      const values = [stu_name_first, stu_name_last, stu_email, stu_pass, stu_academy, parsedGrade];
+  
       const [result] = await connection.execute(insertQuery, values);
-
+  
       if (result.affectedRows > 0) {
         console.log('Student registration successful');
         res.status(201).json({ message: 'Student registration successful' });
@@ -202,7 +205,7 @@ app.post('/api/students', async (req, res) => {
     console.error('Error registering student:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+  });
 
 
 app.post('/api/getCourseTags', async (req, res) => {

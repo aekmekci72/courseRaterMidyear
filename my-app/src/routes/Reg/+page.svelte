@@ -6,6 +6,9 @@
      * @property {string} stu_name_last
      * @property {string} stu_email
      * @property {string} stu_pass
+     * @property {string} stu_academy
+     * @property {string} stu_grade
+
      */
   
     import { onMount } from 'svelte';
@@ -25,6 +28,8 @@
     let username = '';
     let password = '';
     let confirmPassword = '';
+    let academy = '';
+    let grade = '';
   
     let error = '';
   
@@ -42,7 +47,14 @@
         console.log(err);
       }
     }
-  
+/** 
+ * @param {string} username 
+ * @returns {boolean} True if the username is unique, false if it already exists
+ */
+ function isUsernameUnique(username) {
+  return !students.some(student => student.stu_email === username);
+}
+
     onMount(fetchStudents);
     async function login() {
       try {
@@ -77,7 +89,7 @@
 
   
     async function register() {
-  if (!firstName || !lastName || !username || !password || !confirmPassword) {
+  if (!firstName || !lastName || !username || !password || !confirmPassword || !academy || !grade) {
     error = 'Please fill in all fields';
     return;
   }
@@ -102,12 +114,21 @@
       return;
     }
 
-  const userData = {
-    stu_name_first: firstName,
-    stu_name_last: lastName,
-    stu_email: username,
-    stu_pass: password,
-  };
+    const isUnique = isUsernameUnique(username);
+
+if (!isUnique) {
+  error = 'Username is already taken';
+  return;
+}
+
+    const userData = {
+        stu_name_first: firstName,
+        stu_name_last: lastName,
+        stu_email: username,
+        stu_pass: password,
+        stu_academy: academy,
+        stu_grade: grade
+      };
 
   try {
     // Make a POST request to register the user
@@ -231,6 +252,26 @@
 
     <label for="confirmPassword">Confirm Password</label>
     <input bind:value={confirmPassword} id="confirmPassword" type="password" />
+
+    <label for="academy">Academy</label>
+    <input bind:value={academy} id="academy" type="academy" />
+    
+    <label for="grade">Grade</label>
+    <input bind:value={grade} id="grade" type="grade" />
+    
+    <!-- <label for="academy">Academy</label>
+    <select bind:value={academy} id="academy">
+      <option value="academy1">Academy 1</option>
+      <option value="academy2">Academy 2</option>
+    </select>
+
+    <label for="grade">Grade</label>
+    <select bind:value={grade} id="grade">
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+    </select> -->
+
 
     <button type="submit">Register</button>
   </form>
