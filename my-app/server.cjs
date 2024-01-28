@@ -118,25 +118,47 @@ app.get('/api/getStudentCourses', async (req, res) => {
 });
 
 app.post('/api/updateRatings', async (req, res) => {
-
-  const {studentId, courseName, difficultyRating, interestRating, teachingStyle } = req.body;
+  const { studentId, courseName, difficultyRating, interestRating, teachingStyle } = req.body;
 
   try {
     const connection = await createConnection();
 
     try {
-      const updateQuery = `
-        UPDATE stuCourseXRef
-        SET r1 = ?, r2 = ?, r3 = ?
+      // Fetch existing ratings from the database
+      const selectQuery = `
+        SELECT r1, r2, r3
+        FROM stuCourseXRef
         WHERE stu_id = ?
           AND course_id = (SELECT course_id FROM course WHERE course_name = ?)
       `;
 
-      const values = [difficultyRating, interestRating, teachingStyle, studentId, courseName];
+      const selectValues = [studentId, courseName];
 
-      const [result] = await connection.execute(updateQuery, values);
+      const [selectResult] = await connection.execute(selectQuery, selectValues);
 
-      if (result.affectedRows > 0) {
+      // Calculate the average of existing and new ratings
+      const existingR1 = selectResult[0].r1 || 0;
+      const existingR2 = selectResult[0].r2 || 0;
+      const existingR3 = selectResult[0].r3 || 0;
+
+      const averageRating = (existingR1 + existingR2 + existingR3 + difficultyRating + interestRating + teachingStyle) / 6;
+
+      // Update the ratings in the database
+      const updateQuery = `
+        UPDATE stuCourseXRef
+        SET r1 = ?,
+            r2 = ?,
+            r3 = ?,
+            average_rating = ?
+        WHERE stu_id = ?
+          AND course_id = (SELECT course_id FROM course WHERE course_name = ?)
+      `;
+
+      const updateValues = [difficultyRating, interestRating, teachingStyle, averageRating, studentId, courseName];
+
+      const [updateResult] = await connection.execute(updateQuery, updateValues);
+
+      if (updateResult.affectedRows > 0) {
         console.log('Ratings updated successfully');
         res.status(200).json({ message: 'Ratings updated successfully' });
       } else {

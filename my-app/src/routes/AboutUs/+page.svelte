@@ -3,9 +3,8 @@
   import contact from './contact.png';
 
   let teamMembers = [
-    { name: 'John Doe', role: 'Founder' },
-    { name: 'Jane Smith', role: 'Designer' },
-    { name: 'Bob Johnson', role: 'Developer' },
+    { name: 'Shreeja Das', role: 'shrdas26@bergen.org' },
+    { name: 'Anna Ekmekci', role: 'annekm26@bergen.org' },
   ];
 </script>
 
@@ -43,13 +42,14 @@
   img {
     max-width: 60%;
     height: auto;
+    margin-right: -30%;
   }
 
   .text-container {
-    padding: 3%;
+    padding: 5%;
     border: .01px dotted #FE502D;
     border-radius: 10px;
-    max-width: 30%;
+    max-width: 40%;
     text-align: left;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
@@ -59,6 +59,20 @@
     font-family: 'Indie Flower', cursive;
     color: #333;
   }
+
+
+  footer {
+    background-size: cover;
+    background-color: #d45136; /* Fallback color in case the image doesn't load */
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-family: 'Indie Flower', cursive;
+  }
+
 </style>
 
 <Navbar />
@@ -77,3 +91,8 @@
     {/each}
   </div>
 </section>
+
+
+<footer>
+  <p>All rights reserved: Shreeja Das & Anna Ekmekci</p>
+</footer>
