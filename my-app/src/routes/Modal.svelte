@@ -8,6 +8,16 @@
   export let isOpen = false;
   export let courseName = '';
   export let studentId = '';
+
+  let teachingStyles = [
+  'Slideshows',
+  'Lecture',
+  'Code Along',
+  'Interactive',
+  'Project Based',
+  'Worksheet Heavy',
+  'Test Heavy',
+];
   
   
   function closeModal() {
@@ -103,17 +113,15 @@
     </div>        
     <div class="survey-question">
       <label>Teaching style:</label>
-      <select bind:value={teachingStyle} on:change={setTeachingStyle}>
-        <option value="Slideshows">Slideshows</option>
-        <option value="Lecture">Lecture</option>
-        <option value="Code Along">Code Along</option>
-        <option value="Interactive">Interactive</option>
-        <option value="Project Based">Project Based</option>
-        <option value="Worksheet Heavy">Worksheet Heavy</option>
-        <option value="Test Heavy">Test Heavy</option>
-      </select>
+      {#each teachingStyles as style}
+        <div class="checkbox-option">
+          <input type="checkbox" id={style} bind:group={teachingStyle} value={style} />
+          <label for={style}></label>
+          <span>{style}</span>
+        </div>
+      {/each}
     </div>
-
+        
       <button class="close-button" on:click={closeModal}>
         <i class="fas fa-times"></i>
       </button>
@@ -125,6 +133,45 @@
 {/if}
 
 <style>
+
+  
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .checkbox-option input {
+    display: none;
+  }
+
+  .checkbox-option label {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FE502D;
+    border-radius: 4px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+
+  .checkbox-option input:checked + label:after {
+    content: '\f00c'; /* Unicode for checkmark (Font Awesome) */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 16px;
+    color: #FE502D;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .checkbox-option span {
+    font-size: 16px;
+    color: #333;
+  }
+
   .modal {
     position: fixed;
     top: 0;

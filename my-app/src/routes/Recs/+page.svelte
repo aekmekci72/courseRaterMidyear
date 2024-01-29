@@ -10,18 +10,38 @@
 	 * @property {number} active
 	 * @property {string} description
 	 * @property {string} prereq
+	 * @property {string} tags
+	 * 
 	 */
-	
-	 import { onMount } from 'svelte';
+  
+	import Modal from '../Modallookup.svelte';
+	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
-	import Modal from '../Modal.svelte';
-
-	
+  
 	/** @type {Array<Course>} */
 	let courses = [];
+	let searchTerm = '';
+	let showModal = false;
+
+/** @type {Array<string>} */
+	let uniqueTags = [];
+
+/** @type {Array<string>} */
+let selectedTags = [];
 	
-	
-	onMount(async () => {
+/**
+ * @type {Course | null}
+ */
+ let selectedCourse = null;
+  
+ $: filteredCourses = courses.filter(
+    (course) =>
+      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedTags.length === 0 ||
+        selectedTags.every((tag) => course.tags.includes(tag)))
+  );
+  
+  onMount(async () => {
     const studentId = localStorage.getItem('selectedStudentId');
 
     // Check if the user is not logged in, redirect to login
@@ -35,6 +55,8 @@
 
       if (response.ok) {
         courses = await response.json();
+
+        uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
       } else {
         console.error('Failed to fetch courses:', response.statusText);
       }
@@ -43,12 +65,38 @@
     }
   });
 
-	function handleButtonClick() {
-		console.log("Implement rating logic");
-	  }
 
-  </script>
+  /**
+	 * @param {string | null} tag
+	 */
+  function handleTagSelect(tag) {
+    if (tag !== null) {
+		if (!selectedTags.includes(tag)) {
+		selectedTags = [...selectedTags, tag];
+		}
+	}
+  }
+	/**
+	 * @param {string} tag
+	 */
+  function removeTag(tag) {
+    selectedTags = selectedTags.filter((t) => t !== tag);
+  }
+
   
+	/**
+	 * @param {Course} course
+	 */
+	function handleButtonClick(course) {
+	  selectedCourse = course;
+	  openModal();
+	}
+  
+	function openModal() {
+	  showModal = true;
+	}
+  </script>
+	  
   <style>
 	@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Charmonman&family=Indie+Flower&family=Shadows+Into+Light&display=swap');
 	
@@ -112,26 +160,72 @@
 	  font-family: 'Indie Flower', cursive;
 	  font-size: 1.6rem;
 	}
+		.search {
+    padding: 0.5rem 0.5rem;
+	width: 50%; /* Set a specific width for the search bar */
+    border: 1px solid #B2A59B; /* Add a border for better visibility */
+    border-radius: 0.25rem;
+    margin: 2rem;
+    color: #B2A59B;
+    background-color: #F7F7F7; /* Add a background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+    transition: border-color 0.3s ease; /* Add a smooth transition for the border color */
+	font-family: 'Indie Flower', cursive;
+
+		}
+    /* Hover effect */
+    &:hover {
+        border-color: #FE502D; /* Change border color on hover */
+    }
+
+    /* Focus effect */
+    &:focus {
+        outline: none; /* Remove default focus outline */
+        border-color: #5E4B35; /* Change border color on focus */
+    }
+
   </style>
   
-  <Navbar/>
-
+  <Navbar />
   <main class="container mx-auto">
-	
-	{#if courses.length > 0}
-	  {#each courses as course (course.course_id)}
+	<h1>Lookup</h1>
+	<div class="tag-filter">
+		<label for="tag-dropdown">Filter by Tags:</label>
+		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
+			<option value="" disabled selected>Select Tag</option>
+		  {#each uniqueTags as tag}
+			<option value={tag}>{tag}</option>
+		  {/each}
+		</select>
+		{#each selectedTags as tag}
+		  <div class="tag-tab">
+			{tag}
+			<button on:click={() => removeTag(tag)}>x</button>
+		  </div>
+		{/each}
+	  </div>
+  
+	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
+  
+	{#if filteredCourses.length > 0}
+	  {#each filteredCourses as course (course.course_id)}
 		<div class="course-card">
 		  <div class="course-info">
-			<p class="course-name">Course: {course.course_name}</p>
+			<p class="course-name">{course.course_name}</p>
 			<p class="course-description">{course.description}</p>
 		  </div>
-		  <button on:click={() => handleButtonClick()}>Rate Me</button>
+		  <button on:click={() => handleButtonClick(course)}>Learn More</button>
 		</div>
 	  {/each}
 	{:else}
 	  <p class="no-courses">No courses available.</p>
 	{/if}
   
+	<!-- Modal -->
+  {#if showModal}
+    <Modal bind:isOpen={showModal} bind:course={selectedCourse} />
+  {/if}
+	
 	<style>
 	  .course-card {
 		display: flex;
@@ -146,11 +240,11 @@
 		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
-		text-align: left; /* Align text to the left within the card */
+		text-align: left;
 	  }
   
 	  .course-card:hover {
-		transform: translateY(-5px); /* Lift the card slightly on hover */
+		transform: translateY(-5px); 
 	  }
   
 	  .course-name {
