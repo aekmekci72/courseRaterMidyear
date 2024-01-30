@@ -371,42 +371,39 @@ GROUP BY
       console.log('Preferred Tags:', preferredTags);
 
       const [recommendedCourses] = await connection.execute(`
-      SELECT
-      course.course_id,
-      course.course_name,
-      course.teacher_id,
-      AVG(IFNULL(stuCourseXRef.r1, 0)) AS r1,
-      AVG(IFNULL(stuCourseXRef.r2, 0)) AS r2,
-      (
-        SELECT r3
-        FROM stuCourseXRef
-        WHERE course.course_id = stuCourseXRef.course_id
-        GROUP BY r3
-        ORDER BY COUNT(*) DESC
-        LIMIT 1
-      ) AS avg_r3,
-      course.active,
-      course.description,
-      course.prereq
-    FROM
-      course
-      LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
-      LEFT JOIN student ON stuCourseXRef.stu_id = student.stu_id
-    WHERE
-      student.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
-      AND (stuCourseXRef.stu_id IS NULL OR stuCourseXRef.stu_id != ?) -- Exclude courses the student is already taking
-    GROUP BY
-      course.course_id
-    ORDER BY
-      (r1 + r2) DESC
-    LIMIT 5;
-    
-
-
-    
+        SELECT
+          course.course_id,
+          course.course_name,
+          course.teacher_id,
+          AVG(IFNULL(stuCourseXRef.r1, 0)) AS r1,
+          AVG(IFNULL(stuCourseXRef.r2, 0)) AS r2,
+          (
+            SELECT r3
+            FROM stuCourseXRef
+            WHERE course.course_id = stuCourseXRef.course_id
+            GROUP BY r3
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+          ) AS avg_r3,
+          course.active,
+          course.description,
+          course.prereq,
+          GROUP_CONCAT(tagCourseXRef.tag) AS tags -- Include tags in the result set
+        FROM
+          course
+          LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
+          LEFT JOIN student ON stuCourseXRef.stu_id = student.stu_id
+          LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+        WHERE
+          student.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+          AND (stuCourseXRef.stu_id IS NULL OR stuCourseXRef.stu_id != ?) -- Exclude courses the student is already taking
+        GROUP BY
+          course.course_id
+        ORDER BY
+          (r1 + r2) DESC
+        LIMIT 5;
       `, [studentId, studentId]);
 
-      console.log('Recommended Courses:', recommendedCourses);
       const detailedRecommendations = await Promise.all(recommendedCourses.map(async (course) => {
         const [courseDetails] = await connection.execute(`
           SELECT
@@ -432,16 +429,23 @@ GROUP BY
         const academyAvg = ((averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2 + (averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1) / 2;
         const totalAvg = ((averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2 + (averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1) / 2;
 
-        const preferredTagRatings = preferredTags.reduce((sum, tag) => sum + (tag.tag === course.tags ? tag.avg_rating : 0), 0);
-              console.log(preferredTagRatings);
+        const courseTags = course.tags ? course.tags.split(',') : [];
+        let preferredTagRatings = 0;
+
+        for (const tag of courseTags) {
+          const matchingTag = preferredTags.find(preferredTag => preferredTag.tag === tag);
+          if (matchingTag) {
+            preferredTagRatings += matchingTag.avg_rating;
+          }
+        }
+
         const totalScore = academyAvg + totalAvg + preferredTagRatings;
 
         return { ...course, ...courseDetails[0], academyAvg, totalAvg, preferredTagRatings, totalScore };
       }));
 
       const sortedRecommendations = detailedRecommendations.sort((a, b) => b.totalScore - a.totalScore);
-
-      console.log('Sorted Recommendations:', sortedRecommendations);
+      console.log(sortedRecommendations);
       res.json(sortedRecommendations);
 
     } finally {
@@ -452,7 +456,6 @@ GROUP BY
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 app.delete('/api/deleteCourse', async (req, res) => {
   const { courseId } = req.query;
