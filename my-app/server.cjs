@@ -195,6 +195,10 @@ app.post('/api/addStudentCourse', async (req, res) => {
       }
 
       // Insert the course into stuCourseXRef
+
+      if (!r3) {
+        r3 = 'N/A';
+      }
       await connection.execute(`
         INSERT INTO stuCourseXRef (stu_id, course_id, r1, r2, r3) VALUES (?, (SELECT course_id from course where course_name = ?), ?, ?, ?)
       `, [studentId, courseName, r1, r2, r3]);
