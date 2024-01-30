@@ -272,27 +272,34 @@ if (!isUnique) {
 
     <label for="confirmPassword">Confirm Password</label>
     <input bind:value={confirmPassword} id="confirmPassword" type="password" />
-
+<!-- 
     <label for="academy">Academy</label>
     <input bind:value={academy} id="academy" type="academy" />
     
     <label for="grade">Grade</label>
-    <input bind:value={grade} id="grade" type="grade" />
+    <input bind:value={grade} id="grade" type="grade" /> -->
     
-    <!-- <label for="academy">Academy</label>
+    <label for="academy">Academy</label>
     <select bind:value={academy} id="academy">
-      <option value="academy1">Academy 1</option>
-      <option value="academy2">Academy 2</option>
+      <option value="ATCS">ATCS</option>
+      <option value="AMST">AMST</option>
+      <option value="ABF">ABF</option>
+      <option value="AEDT">AEDT</option>
+      <option value="AAST">AAST</option>
+      <option value="ACAHA">ACAHA</option>
+      <option value="AVPA -V">AVPA -V</option>
+      <option value="AVPA -M">AVPA -M</option>
+      <option value="AVPA -T">AVPA -T</option>
     </select>
-
+    
     <label for="grade">Grade</label>
     <select bind:value={grade} id="grade">
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-    </select> -->
-
-
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+    </select>
+        
     <button type="submit">Register</button>
   </form>
 
