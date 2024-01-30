@@ -204,6 +204,10 @@ let selectedTags = [];
         border-color: #5E4B35; /* Change border color on focus */
     }
 
+.tag-filter {
+	font-family: 'Indie Flower', cursive;
+}
+
   </style>
   
   <Navbar />
