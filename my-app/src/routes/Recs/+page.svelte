@@ -58,11 +58,6 @@
     console.error('Error fetching courses:', error);
   }
 });
-
-
-
-
-	
   
 	/**
 	 * @param {Course} course
