@@ -280,6 +280,105 @@ app.post('/api/getCourseTags', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.get('/api/recs', async (req, res) => {
+  const { studentId } = req.query;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [averageRatings] = await connection.execute(`
+        SELECT
+          scxr.course_id,
+          AVG(scxr.r1) AS avg_r1,
+          AVG(scxr.r2) AS avg_r2
+        FROM
+          stuCourseXRef scxr
+          LEFT JOIN student s ON scxr.stu_id = s.stu_id
+        WHERE
+          s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+        GROUP BY
+          scxr.course_id;
+      `, [studentId]);
+
+      console.log('Average Ratings of Same Academy:', averageRatings);
+
+      const [preferredTags] = await connection.execute(`
+        SELECT c.tag, AVG(scr.r1 + scr.r2) AS avg_rating
+        FROM tagCourseXRef c
+        JOIN stuCourseXRef scr ON c.course_id = scr.course_id
+        WHERE c.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)
+          AND scr.stu_id = ?
+        GROUP BY c.tag
+        ORDER BY avg_rating DESC
+        LIMIT 5;
+      `, [studentId, studentId]);
+
+      console.log('Preferred Tags:', preferredTags);
+
+      const [recommendedCourses] = await connection.execute(`
+        SELECT
+          avgRatings.course_id,
+          avgRatings.avg_r1,
+          avgRatings.avg_r2,
+          COALESCE(prereqStatus.taken, 0) AS prerequisite_taken,
+          COALESCE(course.active, 0) AS course_active
+        FROM
+          (SELECT
+            scxr.course_id,
+            AVG(scxr.r1) AS avg_r1,
+            AVG(scxr.r2) AS avg_r2
+          FROM
+            stuCourseXRef scxr
+            LEFT JOIN student s ON scxr.stu_id = s.stu_id
+          WHERE
+            s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+          GROUP BY
+            scxr.course_id) AS avgRatings
+        LEFT JOIN
+          (SELECT
+            pc.course_id,
+            1 AS taken
+          FROM
+            stuCourseXRef pc
+          WHERE
+            pc.stu_id = ?
+            AND pc.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)) AS prereqStatus
+        ON avgRatings.course_id = prereqStatus.course_id
+        LEFT JOIN
+          course
+        ON avgRatings.course_id = course.course_id
+        WHERE
+          COALESCE(prereqStatus.taken, 0) = 0 -- Exclude courses already taken
+          AND COALESCE(course.active, 0) = 1 -- Include only active courses
+        ORDER BY
+          (avgRatings.avg_r1 + avgRatings.avg_r2) DESC
+        LIMIT 5;
+      `, [studentId, studentId, studentId]);
+
+      console.log('Recommended Courses:', recommendedCourses);
+      const detailedRecommendations = await Promise.all(recommendedCourses.map(async (course) => {
+        const [courseDetails] = await connection.execute(`
+          SELECT course.*, GROUP_CONCAT(tag) AS tags
+          FROM course
+          LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+          WHERE course.course_id = ?
+          GROUP BY course.course_id
+        `, [course.course_id]);
+
+        return { ...course, ...courseDetails[0] };
+      }));
+
+      console.log('Detailed Recommendations:', detailedRecommendations);
+      res.json(detailedRecommendations);
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error fetching recommended courses:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 app.listen(PORT, () => {

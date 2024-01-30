@@ -41,29 +41,21 @@ let selectedTags = [];
         selectedTags.every((tag) => course.tags.includes(tag)))
   );
   
-  onMount(async () => {
-    const studentId = localStorage.getItem('selectedStudentId');
+	onMount(async () => {
+		try {
+			const response = await fetch('http://localhost:3000/api/courses');
+			if (response.ok) {
+			courses = await response.json();
 
-    // Check if the user is not logged in, redirect to login
-    if (!studentId) {
-      window.location.href = './';
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:3000/api/courses');
-
-      if (response.ok) {
-        courses = await response.json();
-
-        uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
-      } else {
-        console.error('Failed to fetch courses:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    }
-  });
+			uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
+			console.log(uniqueTags);
+			} else {
+			console.error('Failed to fetch courses:', response.statusText);
+			}
+		} catch (error) {
+			console.error('Error fetching courses:', error);
+		}
+		});
 
 
   /**
@@ -184,23 +176,6 @@ let selectedTags = [];
         border-color: #5E4B35; /* Change border color on focus */
     }
 
-	.tag-filter {
-		font-family: 'Indie Flower', cursive;
-		color: black;
-
-	}
-
-	.tag-dropdown {
-	}
-
-	.tag-item{
-		margin-top: 30px;
-	}
-
-	.tag-tab{
-		padding-top: 4rem;
-	}
-
   </style>
   
   <Navbar />
@@ -211,7 +186,7 @@ let selectedTags = [];
 		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
 			<option value="" disabled selected>Select Tag</option>
 		  {#each uniqueTags as tag}
-			<option value={tag} class="tag-item">{tag}</option>
+			<option value={tag}>{tag}</option>
 		  {/each}
 		</select>
 		{#each selectedTags as tag}

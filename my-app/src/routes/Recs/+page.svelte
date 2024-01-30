@@ -23,66 +23,45 @@
 	let searchTerm = '';
 	let showModal = false;
 
-/** @type {Array<string>} */
-	let uniqueTags = [];
 
-/** @type {Array<string>} */
-let selectedTags = [];
-	
 /**
  * @type {Course | null}
  */
  let selectedCourse = null;
   
- $: filteredCourses = courses.filter(
-    (course) =>
-      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedTags.length === 0 ||
-        selectedTags.every((tag) => course.tags.includes(tag)))
-  );
-  
-  onMount(async () => {
-    const studentId = localStorage.getItem('selectedStudentId');
+ onMount(async () => {
+  const studentId = localStorage.getItem('selectedStudentId');
 
-    // Check if the user is not logged in, redirect to login
-    if (!studentId) {
-      window.location.href = './';
-      return;
-    }
+  // Check if the user is not logged in, redirect to login
+  if (!studentId) {
+    window.location.href = './';
+    return;
+  }
 
-    try {
-      const response = await fetch('http://localhost:3000/api/courses');
+  try {
+    const response = await fetch(`http://localhost:3000/api/recs?studentId=${studentId}`);
 
-      if (response.ok) {
-        courses = await response.json();
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Recommendations Data:', data);
 
-        uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
+      if (Array.isArray(data) && data.length > 0) {
+        courses = data;
       } else {
-        console.error('Failed to fetch courses:', response.statusText);
+        console.error('Invalid or empty recommendations data format:', data);
       }
-    } catch (error) {
-      console.error('Error fetching courses:', error);
+    } else {
+      console.error('Failed to fetch courses:', response.statusText);
     }
-  });
-
-
-  /**
-	 * @param {string | null} tag
-	 */
-  function handleTagSelect(tag) {
-    if (tag !== null) {
-		if (!selectedTags.includes(tag)) {
-		selectedTags = [...selectedTags, tag];
-		}
-	}
+  } catch (error) {
+    console.error('Error fetching courses:', error);
   }
-	/**
-	 * @param {string} tag
-	 */
-  function removeTag(tag) {
-    selectedTags = selectedTags.filter((t) => t !== tag);
-  }
+});
 
+
+
+
+	
   
 	/**
 	 * @param {Course} course
@@ -188,27 +167,13 @@ let selectedTags = [];
   
   <Navbar />
   <main class="container mx-auto">
-	<h1>Lookup</h1>
-	<div class="tag-filter">
-		<label for="tag-dropdown">Filter by Tags:</label>
-		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
-			<option value="" disabled selected>Select Tag</option>
-		  {#each uniqueTags as tag}
-			<option value={tag}>{tag}</option>
-		  {/each}
-		</select>
-		{#each selectedTags as tag}
-		  <div class="tag-tab">
-			{tag}
-			<button on:click={() => removeTag(tag)}>x</button>
-		  </div>
-		{/each}
-	  </div>
+	<h1>Recommendations</h1>
+	
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
   
-	{#if filteredCourses.length > 0}
-	  {#each filteredCourses as course (course.course_id)}
+	{#if courses.length > 0}
+	  {#each courses as course (course.course_id)}
 		<div class="course-card">
 		  <div class="course-info">
 			<p class="course-name">{course.course_name}</p>
