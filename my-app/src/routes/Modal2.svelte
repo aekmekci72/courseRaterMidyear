@@ -60,6 +60,7 @@
     active: isActive ? 1 : 0,
     description: descriptionInput,
     prereq: prereq,
+    tags:selectedTags
   };
 
   console.log('Sending data:', testData);
@@ -85,6 +86,67 @@
     location.reload();
   closeModal();
 }
+
+let tagInput = ''; // Input value for tags
+
+/**
+ * @type {string[]}
+ */
+  let tagSuggestions = []; // Array to store tag suggestions
+  /**
+   * @type {string[]}
+   */
+  let selectedTags = []; // Array to store selected tags
+
+  // Dummy array of tags for autofill suggestions
+  const tagArray = [
+  'Astronomy', 'Math', 'Computer Science', 'Theater', 'Music', 'Art', 'Handicrafts', 'Writing', 'Science', 
+  'History', 'Geography', 'Languages', 'Culinary', 'Dance', 'Photography', 'Health', 'Law', 'Psychology', 
+  'Economics', 'Marketing', 'Graphic Design', 'Philosophy', 'Public Speaking', 'Design', 'Robotics', 'Animation', 
+  'Fashion', 'Film', 'Anatomy', 'Fitness', 'Medicine', 'Business Analytics', 'Sculpture', 'Drawing', 'Creative Writing', 
+  'Gardening', 'Quantum', 'Engineering', 'Research Prereq', 'Sustainability', 'Finance', 'SAT/ACT', 'Research', 'Leadership'
+];
+
+  // Function to update tag suggestions based on input value
+  function updateTagSuggestions() {
+    const inputValue = tagInput.toLowerCase();
+    tagSuggestions = tagArray.filter(tag => tag.toLowerCase().includes(inputValue));
+  }
+
+/**
+ * @param {Event} event
+ */
+ function handleTagInputChange(event) {
+  const target = event?.target;
+
+  if (target instanceof HTMLInputElement) {
+    tagInput = target.value;
+    updateTagSuggestions();
+  }
+}
+  /**
+   * @param tag {string}
+   */
+   function selectTag(tag) {
+    if (!selectedTags.includes(tag)) {
+      selectedTags = [...selectedTags, tag];
+      tagInput = ''; 
+      updateTagSuggestions(); 
+    }
+  }
+
+  /**
+   * @param tag {string}
+   */
+  function removeTag(tag) {
+    selectedTags = selectedTags.filter(selectedTag => selectedTag !== tag);
+    updateTagSuggestions(); // Update suggestions after removing a tag
+  }
+
+  onMount(() => {
+    updateTagSuggestions();
+  });
+
 </script>
 
 {#if isOpen}
@@ -115,8 +177,30 @@
           <span></span>
         </div>
       </div>      
+
+      <div class="tag-container">
+        {#each selectedTags as tag (tag)}
+          <div class="tag" on:click={() => removeTag(tag)}>{tag}</div>
+        {/each}
+      </div>
       
-      
+      <div class="tag-input-container">
+        <input
+          type="text"
+          class="tag-input"
+          placeholder="Type tags here"
+          bind:value={tagInput}
+          on:input={handleTagInputChange}
+        />
+        {#if tagInput !== '' && tagSuggestions.length > 0}
+          <div class="tag-suggestions">
+            {#each tagSuggestions as suggestion (suggestion)}
+              <div class="tag" on:click={() => selectTag(suggestion)}>{suggestion}</div>
+            {/each}
+          </div>
+        {/if}
+      </div>
+                              
       <div class="survey-question">
       <label>Difficulty:</label>
       
@@ -170,7 +254,33 @@
 {/if}
 
 <style>
+  .tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5%;
+  }
 
+  .tag {
+    background-color: #ddd;
+    padding: 5px;
+    border-radius: 3px;
+    margin-right: 5px;
+    cursor: pointer;
+    
+  }
+
+  .tag-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 2%;
+    font-size: 16px;
+  }
+
+  .tag-suggestions {
+    margin-bottom: 3%;
+  }
 .inputs {
     border: 2px solid #B2A59B;  /* Adjust the width and style as needed */
 }

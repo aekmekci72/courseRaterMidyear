@@ -194,8 +194,8 @@
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 100%;
+    width: 40%;
+    max-width: 60%;
     color: #bf7e71;
 
     /* Add the following styles for scrollability */

@@ -428,7 +428,7 @@ $: filteredCourses = courses.filter(course =>
 			{:else}
 			  <p class="rating-value">Na</p>
 			{/if}
-		  </div>
+		  </div>		
 			  </div>
 			</div>
 

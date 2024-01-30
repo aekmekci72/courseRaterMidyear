@@ -167,7 +167,7 @@ app.post('/api/updateRatings', async (req, res) => {
   }
 });
 app.post('/api/addStudentCourse', async (req, res) => {
-  const { studentId, courseName, teacherId, r1, r2, r3, active, description, prereq } = req.body;
+  const { studentId, courseName, teacherId, r1, r2, r3, active, description, prereq, tags } = req.body;
 
   try {
     const connection = await createConnection();
@@ -184,24 +184,34 @@ app.post('/api/addStudentCourse', async (req, res) => {
       }
 
       // Insert the course with the provided courseId
+      let courseId;
       try {
-        await connection.execute(`
+        const [result] = await connection.execute(`
           INSERT INTO course (course_name, teacher_id, active, description, prereq)
-          VALUES (?, ?, ?, ?, ?)`,
-          [courseName, teacherId, active, description, prereq]);
+          VALUES (?, ?, ?, ?, ?)`, [courseName, teacherId, active, description, prereq]);
+
+        courseId = result.insertId;
       } catch (error) {
         console.error('Error inserting course:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
 
       // Insert the course into stuCourseXRef
-
       if (!r3) {
         r3 = 'N/A';
       }
+
       await connection.execute(`
-        INSERT INTO stuCourseXRef (stu_id, course_id, r1, r2, r3) VALUES (?, (SELECT course_id from course where course_name = ?), ?, ?, ?)
-      `, [studentId, courseName, r1, r2, r3]);
+        INSERT INTO stuCourseXRef (stu_id, course_id, r1, r2, r3) VALUES (?, ?, ?, ?, ?)
+      `, [studentId, courseId, r1, r2, r3]);
+
+      if (tags && tags.length > 0) {
+        for (const tag of tags) {
+          await connection.execute(`
+            INSERT INTO tagCourseXRef (course_id, tag) VALUES (?, ?)
+          `, [courseId, tag]);
+        }
+      }
 
       res.json({ success: true });
     } finally {
