@@ -80,6 +80,8 @@
       console.error('Error adding test course:', error);
     });
 
+  
+  location.reload();
   closeModal();
 }
 </script>

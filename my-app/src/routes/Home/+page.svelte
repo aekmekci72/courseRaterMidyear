@@ -151,6 +151,7 @@ $: filteredCourses = courses.filter(course =>
       .then(response => {
         if (response.ok) {
           courses = courses.filter(c => c.course_id !== courseId);
+		  location.reload();
         } else {
           console.error('Failed to delete course:', response.statusText);
         }
@@ -421,13 +422,16 @@ $: filteredCourses = courses.filter(course =>
 		  <div class="rating">
 			<p class="rating-label">Teaching Style:</p>
 			{#if hoveredCourse && hoveredCourse.r3.trim() !== ''}
-			  <p class="rating-value">{hoveredCourse.r3}</p>
+			  {#each JSON.parse(hoveredCourse.r3) as style (style)}
+				<p class="rating-value">{style}</p>
+			  {/each}
 			{:else}
 			  <p class="rating-value">Na</p>
 			{/if}
 		  </div>
-				  </div>
-	  </div>
+			  </div>
+			</div>
+
 	  <div class="button-group">
 		<button class="rate-course-button" on:click={() => handleButtonClick(course)}>Rate</button>
 		<button class="edit-course-button" on:click={() => editcourse(course)}>
