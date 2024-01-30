@@ -309,13 +309,31 @@ FROM
   course c
   LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
   LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+WHERE
+      s.stu_id != ? AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+  GROUP BY
+  c.course_id;
+
+
+
+      `, [studentId, studentId, studentId]);
+
+
+      const [averagetotalRatings] = await connection.execute(`
+      SELECT
+  c.course_id,
+  COALESCE(AVG(IFNULL(scxr.r1, 0)), 0) AS avg_r1,
+  COALESCE(AVG(IFNULL(scxr.r2, 0)), 0) AS avg_r2
+FROM
+  course c
+  LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
+  LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
 GROUP BY
   c.course_id;
 
 
 
       `, [studentId, studentId]);
-
 
 
       console.log('Average Ratings of Same Academy:', averageRatings);
@@ -391,12 +409,16 @@ GROUP BY
           WHERE course.course_id = ?
           GROUP BY course.course_id;
         `, [course.course_id]);
+        
+        const academyAvg = ((averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2+(averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1)/2;
+        const totalAvg = ((averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2+(averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1)/2;
 
-        return { ...course, ...courseDetails[0] };
+        return { ...course, ...courseDetails[0], academyAvg, totalAvg };
       }));
-
+      
       console.log('Detailed Recommendations:', detailedRecommendations);
       res.json(detailedRecommendations);
+      
     } finally {
       connection.end();
     }
@@ -424,7 +446,7 @@ app.delete('/api/deleteCourse', async (req, res) => {
 
       await connection.execute('DELETE FROM stuCourseXRef WHERE course_id = ?', [courseId]);
 
-      res.json({ success: true });
+      res.json({ succesas: true });
     } finally {
       connection.end();
     }
