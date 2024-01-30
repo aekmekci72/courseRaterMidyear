@@ -325,10 +325,11 @@ $: filteredCourses = courses.filter(course =>
 				<p class="rating-label">Interest:</p>
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
 										  </div>
-			  <!-- <div class="rating">
+			  <div class="rating">
 				<p class="rating-label">Teaching Style:</p>
+				
 				<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
-			  </div> -->
+			  </div>
 			</div>
 		  </div>
 		  <button on:click={() => handleButtonClick(course)}>Rate</button>

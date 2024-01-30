@@ -141,6 +141,7 @@
     align-self: center;
     align-content: center;
     margin-bottom: 10px;
+    margin-left: 30%;
   }
 
   .checkbox-option input {

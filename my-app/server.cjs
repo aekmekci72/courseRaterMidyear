@@ -172,7 +172,6 @@ app.post('/api/updateRatings', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 app.post('/api/addStudentCourse', async (req, res) => {
   const { studentId, courseName, teacherId, r1, r2, r3, active, description, prereq } = req.body;
 
@@ -192,17 +191,21 @@ app.post('/api/addStudentCourse', async (req, res) => {
 
       const courseId = Math.floor(Math.random() * 1000000);
 
+      // Throw an error if courseId is null
+      if (!courseId) {
+        throw new Error('Error generating course ID');
+      }
+
       // Insert the course with the provided courseId
-      try{
-      await connection.execute(`
-      INSERT INTO course (course_id, course_name, teacher_id, r1, r2, r3, active, description, prereq)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-        [courseId, courseName, teacherId, r1, r2, r3, active, description, prereq]);
+      try {
+        await connection.execute(`
+          INSERT INTO course (course_id, course_name, teacher_id, r1, r2, r3, active, description, prereq)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [courseId, courseName, teacherId, r1, r2, r3, active, description, prereq]);
       } catch (error) {
         console.error('Error inserting course:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
-      
 
       // Insert the course into stuCourseXRef
       await connection.execute(`
@@ -218,6 +221,7 @@ app.post('/api/addStudentCourse', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/api/students', async (req, res) => {
   const { stu_name_first, stu_name_last, stu_email, stu_pass, stu_academy, stu_grade } = req.body;
