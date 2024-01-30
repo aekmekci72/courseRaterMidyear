@@ -14,7 +14,7 @@
   export let studentId = '';
   export let difficultyRating = 0;
   export let interestRating = 0;
-  export let teachingStyle = '';
+  export let teachingStyle = 'N/A';
 
 
   let teachingStyles = [

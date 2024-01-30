@@ -417,11 +417,16 @@ $: filteredCourses = courses.filter(course =>
 			<p class="rating-label">Interest:</p>
 			<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
 		  </div>
+
 		  <div class="rating">
 			<p class="rating-label">Teaching Style:</p>
-			<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
+			{#if hoveredCourse && hoveredCourse.r3.trim() !== ''}
+			  <p class="rating-value">{hoveredCourse.r3}</p>
+			{:else}
+			  <p class="rating-value">Na</p>
+			{/if}
 		  </div>
-		</div>
+				  </div>
 	  </div>
 	  <div class="button-group">
 		<button class="rate-course-button" on:click={() => handleButtonClick(course)}>Rate</button>
