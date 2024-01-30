@@ -99,6 +99,26 @@
     return;
   }
 
+  if (password.length < 8) {
+    error = 'Password must be at least 8 characters long';
+    return;
+  }
+
+  if(password.search(/[a-z]/) < 0) {
+    error = 'Password must contain at least one lowercase letter';
+    return;
+  }
+
+  if(password.search(/[A-Z]/) < 0) {
+    error = 'Password must contain at least one uppercase letter';
+    return;
+  }
+
+  if(password.search(/[0-9]/) < 0) {
+    error = 'Password must contain at least one digit';
+    return;
+  }
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
       error = 'Invalid email format';
