@@ -15,6 +15,8 @@
 	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
 	import Modal from '../Modal.svelte';
+	import Modal2 from '../Modal2.svelte';
+
 
   
 	/** @type {Array<Course>} */
@@ -67,6 +69,7 @@ $: filteredCourses = courses.filter(course =>
 });
 
   let showModal = false;
+  let showModal2=false;
 
   /** @type {string} */
   let selectedCourseName = '';
@@ -81,6 +84,13 @@ $: filteredCourses = courses.filter(course =>
     selectedCourseName = courseName;
 	selectedStudentId = studentId;
     showModal = true;
+  }
+  /**
+  * @param {string | undefined} studentId
+     */
+  function openModal2(studentId) {
+	selectedStudentId = studentId;
+    showModal2 = true;
   }
 
 
@@ -103,11 +113,16 @@ $: filteredCourses = courses.filter(course =>
 	  hoveredCourse = null;
 	}
 
+	function addcourse() {
+    const studentId = localStorage.getItem('selectedStudentId');
+    openModal2(studentId || undefined);
+
+	}
 </script>
 
 {#if showAlert}
 <script>
-  alert("Rate your courses...did you opinions change?");
+//   alert("Rate your courses...did you opinions change?");
 </script>
 {/if}
   
@@ -270,6 +285,17 @@ $: filteredCourses = courses.filter(course =>
     }
   }
 
+  .add-course-button {
+    background-color: #FE502D;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-family: 'Indie Flower', cursive;
+	margin: auto;
+  }
+
   </style>
   
   <Navbar />
@@ -277,8 +303,11 @@ $: filteredCourses = courses.filter(course =>
   <main class="container mx-auto">
   
 	<h1>My Courses</h1>
+
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
+
+	<button class="add-course-button" on:click={() => addcourse()}><i class="fas fa-plus"></i></button>
 
 	{#if filteredCourses.length > 0}
 		{#each filteredCourses as course (course.course_id)}
@@ -311,6 +340,8 @@ $: filteredCourses = courses.filter(course =>
 
 	  
 	  <Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} bind:studentId={selectedStudentId} />
+	  <Modal2 bind:isOpen={showModal2} />
+
 		
   </main>
   

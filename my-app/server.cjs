@@ -173,6 +173,52 @@ app.post('/api/updateRatings', async (req, res) => {
   }
 });
 
+app.post('/api/addStudentCourse', async (req, res) => {
+  const { studentId, courseName, teacherId, r1, r2, r3, active, description, prereq } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      // Check if the student already has the course
+      const [existingCourse] = await connection.execute(`
+        SELECT * FROM stuCourseXRef
+        WHERE stu_id = ? AND course_name = ?
+      `, [studentId, courseName]);
+
+      if (existingCourse.length > 0) {
+        return res.status(400).json({ error: 'Student already has the course' });
+      }
+
+      const courseId = Math.floor(Math.random() * 1000000);
+
+      // Insert the course with the provided courseId
+      try{
+      await connection.execute(`
+      INSERT INTO course (course_id, course_name, teacher_id, r1, r2, r3, active, description, prereq)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+        [courseId, courseName, teacherId, r1, r2, r3, active, description, prereq]);
+      } catch (error) {
+        console.error('Error inserting course:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+      
+
+      // Insert the course into stuCourseXRef
+      await connection.execute(`
+        INSERT INTO stuCourseXRef (stu_id, course_id) VALUES (?, ?)
+      `, [studentId, courseId]);
+
+      res.json({ success: true });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error adding student course:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/api/students', async (req, res) => {
   const { stu_name_first, stu_name_last, stu_email, stu_pass, stu_academy, stu_grade } = req.body;
 

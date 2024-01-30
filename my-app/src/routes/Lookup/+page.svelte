@@ -184,6 +184,23 @@ let selectedTags = [];
         border-color: #5E4B35; /* Change border color on focus */
     }
 
+	.tag-filter {
+		font-family: 'Indie Flower', cursive;
+		color: black;
+
+	}
+
+	.tag-dropdown {
+	}
+
+	.tag-item{
+		margin-top: 30px;
+	}
+
+	.tag-tab{
+		padding-top: 4rem;
+	}
+
   </style>
   
   <Navbar />
@@ -194,7 +211,7 @@ let selectedTags = [];
 		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
 			<option value="" disabled selected>Select Tag</option>
 		  {#each uniqueTags as tag}
-			<option value={tag}>{tag}</option>
+			<option value={tag} class="tag-item">{tag}</option>
 		  {/each}
 		</select>
 		{#each selectedTags as tag}

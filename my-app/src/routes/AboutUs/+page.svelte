@@ -30,6 +30,7 @@
     font-size: 4rem;
     font-family: 'Charmonman', cursive;
     color: #FE502D;
+    text-decoration: underline;
   }
 
   section {
@@ -52,6 +53,7 @@
     max-width: 40%;
     text-align: left;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.5rem;
   }
 
   .team-member {
@@ -71,6 +73,7 @@
     bottom: 0;
     width: 100%;
     font-family: 'Indie Flower', cursive;
+    font-size: 1.7rem;
   }
 
 </style>
