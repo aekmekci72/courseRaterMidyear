@@ -137,37 +137,17 @@ app.post('/api/updateRatings', async (req, res) => {
     const connection = await createConnection();
 
     try {
-      // Fetch existing ratings from the database
-      const selectQuery = `
-        SELECT r1, r2, r3
-        FROM stuCourseXRef
-        WHERE stu_id = ?
-          AND course_id = (SELECT course_id FROM course WHERE course_name = ?)
-      `;
-
-      const selectValues = [studentId, courseName];
-
-      const [selectResult] = await connection.execute(selectQuery, selectValues);
-
-      // Calculate the average of existing and new ratings
-      const existingR1 = selectResult[0].r1 || 0;
-      const existingR2 = selectResult[0].r2 || 0;
-      const existingR3 = selectResult[0].r3 || 0;
-
-      const averageRating = (existingR1 + existingR2 + existingR3 + difficultyRating + interestRating + teachingStyle) / 6;
-
-      // Update the ratings in the database
+      
       const updateQuery = `
         UPDATE stuCourseXRef
         SET r1 = ?,
             r2 = ?,
-            r3 = ?,
-            average_rating = ?
+            r3 = ?
         WHERE stu_id = ?
           AND course_id = (SELECT course_id FROM course WHERE course_name = ?)
       `;
 
-      const updateValues = [difficultyRating, interestRating, teachingStyle, averageRating, studentId, courseName];
+      const updateValues = [difficultyRating, interestRating, teachingStyle, studentId, courseName];
 
       const [updateResult] = await connection.execute(updateQuery, updateValues);
 
@@ -195,26 +175,19 @@ app.post('/api/addStudentCourse', async (req, res) => {
       // Check if the student already has the course
       const [existingCourse] = await connection.execute(`
         SELECT * FROM stuCourseXRef
-        WHERE stu_id = ? AND course_name = ?
+        WHERE stu_id = ? AND course_id=(SELECT course_id FROM course WHERE course_name = ?)
       `, [studentId, courseName]);
 
       if (existingCourse.length > 0) {
         return res.status(400).json({ error: 'Student already has the course' });
       }
 
-      const courseId = Math.floor(Math.random() * 1000000);
-
-      // Throw an error if courseId is null
-      if (!courseId) {
-        throw new Error('Error generating course ID');
-      }
-
       // Insert the course with the provided courseId
       try {
         await connection.execute(`
-          INSERT INTO course (course_id, course_name, teacher_id, r1, r2, r3, active, description, prereq)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [courseId, courseName, teacherId, r1, r2, r3, active, description, prereq]);
+          INSERT INTO course (course_name, teacher_id, active, description, prereq)
+          VALUES (?, ?, ?, ?, ?)`,
+          [courseName, teacherId, active, description, prereq]);
       } catch (error) {
         console.error('Error inserting course:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
@@ -222,8 +195,8 @@ app.post('/api/addStudentCourse', async (req, res) => {
 
       // Insert the course into stuCourseXRef
       await connection.execute(`
-        INSERT INTO stuCourseXRef (stu_id, course_id) VALUES (?, ?)
-      `, [studentId, courseId]);
+        INSERT INTO stuCourseXRef (stu_id, course_id, r1, r2, r3) VALUES (?, (SELECT course_id from course where course_name = ?), ?, ?, ?)
+      `, [studentId, courseName, r1, r2, r3]);
 
       res.json({ success: true });
     } finally {
