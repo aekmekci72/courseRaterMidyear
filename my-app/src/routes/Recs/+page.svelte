@@ -179,8 +179,8 @@
 	  <div class="course-info">
 		<p class="course-name">{course.course_name}</p>
 		<p class="course-description">{course.description}</p>
-		<p class="additional-info">Total Average Rating: {course.totalAvg.toFixed(2)}%</p>
-		<p class="additional-info">Academy Average Rating: {course.academyAvg.toFixed(2)}%</p>
+		<p class="additional-info">Total Average Rating: {course.totalAvg.toFixed(2)}</p>
+		<p class="additional-info">Academy Average Rating: {course.academyAvg.toFixed(2)}</p>
 	  </div>
 	  <button on:click={() => handleButtonClick(course)}>Learn More</button>
 	</div>
