@@ -11,7 +11,8 @@
 	 * @property {string} description
 	 * @property {string} prereq
 	 * @property {string} tags
-	 * 
+	 * @property {number} academyAvg
+	 * @property {number} totalAvg
 	 */
   
 	import Modal from '../Modallookup.svelte';
@@ -173,15 +174,18 @@
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
   
 	{#if courses.length > 0}
-	  {#each courses as course (course.course_id)}
-		<div class="course-card">
-		  <div class="course-info">
-			<p class="course-name">{course.course_name}</p>
-			<p class="course-description">{course.description}</p>
-		  </div>
-		  <button on:click={() => handleButtonClick(course)}>Learn More</button>
-		</div>
-	  {/each}
+	{#each courses as course (course.course_id)}
+	<div class="course-card">
+	  <div class="course-info">
+		<p class="course-name">{course.course_name}</p>
+		<p class="course-description">{course.description}</p>
+		<p class="additional-info">Total Average Rating: {course.totalAvg.toFixed(2)}%</p>
+		<p class="additional-info">Academy Average Rating: {course.academyAvg.toFixed(2)}%</p>
+	  </div>
+	  <button on:click={() => handleButtonClick(course)}>Learn More</button>
+	</div>
+  {/each}
+  
 	{:else}
 	  <p class="no-courses">No courses available.</p>
 	{/if}
