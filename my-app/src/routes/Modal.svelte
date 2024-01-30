@@ -71,6 +71,13 @@
       .catch((error) => {
         console.error('Error:', error);
       });
+
+      courseName = '';
+  studentId = '';
+  difficultyRating = 0;
+  interestRating = 0;
+  teachingStyle = '';
+
     closeModal();
   }
 </script>
