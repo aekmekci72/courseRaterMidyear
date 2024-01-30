@@ -357,14 +357,15 @@ GROUP BY
       console.log('Average Ratings of Same Academy:', averageRatings);
 
       const [preferredTags] = await connection.execute(`
-        SELECT c.tag, AVG(scr.r1 + scr.r2) AS avg_rating
-        FROM tagCourseXRef c
-        JOIN stuCourseXRef scr ON c.course_id = scr.course_id
-        WHERE c.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)
-          AND scr.stu_id = ?
-        GROUP BY c.tag
-        ORDER BY avg_rating DESC
-        LIMIT 5;
+      SELECT c.course_id, c.tag, AVG(scr.r1 + scr.r2) AS avg_rating
+      FROM tagCourseXRef c
+      JOIN stuCourseXRef scr ON c.course_id = scr.course_id
+      WHERE c.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)
+        AND scr.stu_id = ?
+      GROUP BY c.course_id, c.tag
+      ORDER BY avg_rating DESC
+      LIMIT 5;
+      
       `, [studentId, studentId]);
 
       console.log('Preferred Tags:', preferredTags);
@@ -427,16 +428,22 @@ GROUP BY
           WHERE course.course_id = ?
           GROUP BY course.course_id;
         `, [course.course_id]);
-        
-        const academyAvg = ((averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2+(averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1)/2;
-        const totalAvg = ((averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2+(averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1)/2;
 
-        return { ...course, ...courseDetails[0], academyAvg, totalAvg };
+        const academyAvg = ((averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2 + (averageRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1) / 2;
+        const totalAvg = ((averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r2 + (averagetotalRatings.find(avg => avg.course_id === course.course_id) || {}).avg_r1) / 2;
+
+        const preferredTagRatings = preferredTags.reduce((sum, tag) => sum + (tag.tag === course.tags ? tag.avg_rating : 0), 0);
+              console.log(preferredTagRatings);
+        const totalScore = academyAvg + totalAvg + preferredTagRatings;
+
+        return { ...course, ...courseDetails[0], academyAvg, totalAvg, preferredTagRatings, totalScore };
       }));
-      
-      console.log('Detailed Recommendations:', detailedRecommendations);
-      res.json(detailedRecommendations);
-      
+
+      const sortedRecommendations = detailedRecommendations.sort((a, b) => b.totalScore - a.totalScore);
+
+      console.log('Sorted Recommendations:', sortedRecommendations);
+      res.json(sortedRecommendations);
+
     } finally {
       connection.end();
     }
