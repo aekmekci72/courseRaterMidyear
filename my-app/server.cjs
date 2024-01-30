@@ -372,11 +372,25 @@ app.get('/api/recs', async (req, res) => {
       console.log('Recommended Courses:', recommendedCourses);
       const detailedRecommendations = await Promise.all(recommendedCourses.map(async (course) => {
         const [courseDetails] = await connection.execute(`
-          SELECT course.*, GROUP_CONCAT(tag) AS tags
-          FROM course
-          LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
-          WHERE course.course_id = ?
-          GROUP BY course.course_id
+        SELECT
+  course.*,
+  GROUP_CONCAT(tag) AS tags,
+  AVG(stuCourseXRef.r1) AS r1,
+  AVG(stuCourseXRef.r2) AS r2,
+  (
+    SELECT r3
+    FROM stuCourseXRef
+    WHERE course.course_id = stuCourseXRef.course_id
+    GROUP BY r3
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+  ) AS r3
+FROM course
+LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
+WHERE course.course_id = ?
+GROUP BY course.course_id;
+
         `, [course.course_id]);
 
         return { ...course, ...courseDetails[0] };
