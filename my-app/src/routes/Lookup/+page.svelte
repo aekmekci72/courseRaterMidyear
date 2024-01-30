@@ -35,36 +35,64 @@ let selectedTags = [];
  let selectedCourse = null;
   
  $: filteredCourses = courses.filter(
-    (course) =>
-      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedTags.length === 0 ||
-        selectedTags.every((tag) => course.tags.includes(tag)))
-  );
+  (course) =>
+    course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedTags.length === 0 ||
+      selectedTags.every((tag) => course.tags && course.tags.includes(tag)))
+);
+
   
-	onMount(async () => {
-		try {
-			const response = await fetch('http://localhost:3000/api/courses');
-			if (response.ok) {
-			courses = await response.json();
+  onMount(async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/courses');
+      if (response.ok) {
+        courses = await response.json();
 
-			uniqueTags = Array.from(new Set(courses.flatMap((course) => course.tags.split(','))));
-			console.log(uniqueTags);
-			} else {
-			console.error('Failed to fetch courses:', response.statusText);
-			}
-		} catch (error) {
-			console.error('Error fetching courses:', error);
-		}
-		});
+        // Check if tags is not null before using split
+        uniqueTags = Array.from(new Set(courses.flatMap((course) => (course.tags ? course.tags.split(',') : []))));
+      } else {
+        console.error('Failed to fetch courses:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  });
 
+/**
+ * @param {string | null} tag
+ */
+ function handleTagSelect(tag) {
+  // Check if a tag is selected
+  if (tag !== null) {
+    // Check if the tag is not already in the selectedTags array
+    if (!selectedTags.includes(tag)) {
+      // Add the tag to the selectedTags array
+      selectedTags = [...selectedTags, tag];
+    }
+  }
 
-  /**
-	 * @param {string | null} tag
-	 */
-  function handleTagSelect(tag) {
-    if (tag !== null) {
-		if (!selectedTags.includes(tag)) {
-		selectedTags = [...selectedTags, tag];
+  // Reset the dropdown to its initial state
+  const dropdown = document.getElementById('tag-dropdown');
+  if (dropdown !== null && dropdown instanceof HTMLSelectElement) {
+    dropdown.value = "";
+  }
+}
+
+  function addSelectedTagManually() {
+	// Get the selected tag from the dropdown
+	const dropdown = document.getElementById('tag-dropdown');
+
+	// Check if dropdown is not null
+	if (dropdown !== null && dropdown instanceof HTMLSelectElement) {
+		const selectedTag = dropdown.value;
+
+		// Check if a tag is selected
+		if (selectedTag !== "" && !selectedTags.includes(selectedTag)) {
+		// Add the tag to the selectedTags array
+		selectedTags = [...selectedTags, selectedTag];
+
+		// Reset the dropdown to its initial state
+		dropdown.value = "";
 		}
 	}
   }
@@ -182,20 +210,24 @@ let selectedTags = [];
   <main class="container mx-auto">
 	<h1>Lookup</h1>
 	<div class="tag-filter">
-		<label for="tag-dropdown">Filter by Tags:</label>
-		<select id="tag-dropdown" on:change={(e) => handleTagSelect(e.target instanceof HTMLSelectElement ? e.target.value : null)}>
-			<option value="" disabled selected>Select Tag</option>
-		  {#each uniqueTags as tag}
-			<option value={tag}>{tag}</option>
-		  {/each}
-		</select>
-		{#each selectedTags as tag}
-		  <div class="tag-tab">
-			{tag}
-			<button on:click={() => removeTag(tag)}>x</button>
-		  </div>
-		{/each}
-	  </div>
+  <label for="tag-dropdown">Filter by Tags:</label>
+  <select id="tag-dropdown">
+    <option value="" disabled selected>Select Tag</option>
+    {#each uniqueTags as tag}
+      <option value={tag}>{tag}</option>
+    {/each}
+  </select>
+  
+  <button on:click={addSelectedTagManually}>+</button>
+  
+  {#each selectedTags as tag (tag)}
+    <div class="tag-tab">
+      <span>{tag}</span>
+      <button on:click={() => removeTag(tag)}>x</button>
+    </div>
+  {/each}
+</div>
+	  
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
   
