@@ -16,6 +16,7 @@
 	import Navbar from '../Navbar.svelte';
 	import Modal from '../Modal.svelte';
 	import Modal2 from '../Modal2.svelte';
+	import Modal3 from '../Modal3.svelte';
 
 
   
@@ -70,9 +71,18 @@ $: filteredCourses = courses.filter(course =>
 
   let showModal = false;
   let showModal2=false;
+  let showModal3=false;
 
   /** @type {string} */
   let selectedCourseName = '';
+
+  let selectedDescription = '';
+  let selectedPrereq = '';
+
+	let selectedr1 = 0;
+	let selectedr2 = 0;
+	let selectedr3 = '';
+
 /**
   /** @type {string | undefined} */
   let selectedStudentId = '';
@@ -92,6 +102,23 @@ $: filteredCourses = courses.filter(course =>
 	selectedStudentId = studentId;
     showModal2 = true;
   }
+/**
+   * @param {string} courseName
+   *    * @param {string} description
+   *    * @param {string} prereq
+   *    * @param {number} r1
+   *    * @param {number} r2
+   *    * @param {string} r3
+   */
+   function openModal3(courseName, description, prereq, r1, r2, r3) {
+	selectedCourseName = courseName;
+	selectedDescription = description;
+	selectedPrereq = prereq;
+	selectedr1 = r1;
+	selectedr2 = r2;
+	selectedr3 = r3;
+	showModal3 = true;
+  }
 
 
   	/**
@@ -101,6 +128,34 @@ $: filteredCourses = courses.filter(course =>
 	const studentId = localStorage.getItem('selectedStudentId')
     openModal(course.course_name, studentId||undefined);
   }
+
+    	/**
+	 * @param {Course} course
+	 */
+  function deletecourse(course) {
+  const confirmDelete = confirm(`Are you sure you want to delete the course "${course.course_name}"?`);
+
+  if (confirmDelete) {
+    // Perform the deletion logic, such as making an API request to delete the course
+    const courseId = course.course_id;
+
+    // Make an API request to delete the course
+    fetch(`http://localhost:3000/api/deleteCourse?courseId=${courseId}`, {
+      method: 'DELETE',
+    })
+      .then(response => {
+        if (response.ok) {
+          courses = courses.filter(c => c.course_id !== courseId);
+        } else {
+          console.error('Failed to delete course:', response.statusText);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting course:', error);
+      });
+  }
+}
+
   
 	/**
 	 * @param {Course} course
@@ -118,6 +173,14 @@ $: filteredCourses = courses.filter(course =>
     openModal2(studentId || undefined);
 
 	}
+
+	      	/**
+	 * @param {Course} course
+	 */
+	function editcourse(course) {
+    openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3);
+	}
+
 </script>
 
 {#if showAlert}
@@ -233,15 +296,32 @@ $: filteredCourses = courses.filter(course =>
 	  font-family: "Indie Flower", cursive;
 	}
   
-	button {
-	  background-color: #FE502D;
-	  color: white;
-	  padding: 0.5rem 1rem;
+
+	button{
+
+		padding: 0.5rem 1rem;
 	  border: none;
 	  border-radius: 0.25rem;
 	  cursor: pointer;
 	  font-family: 'Indie Flower', cursive;
+
 	}
+	.rate-course-button {
+	  background-color: #FE502D;
+	  color: white;
+	}
+
+	.edit-course-button {
+	  /* background-color: #FFBB64; */
+	  color:gray;
+	  opacity: 0.8;
+	}
+	.trash-course-button{
+		/* background-color: #FFBB64; */
+	  color:gray;
+	  opacity: 0.8;
+	}
+
 
 	.search {
     padding: 0.5rem 0.5rem;
@@ -296,6 +376,12 @@ $: filteredCourses = courses.filter(course =>
 	margin: auto;
   }
 
+  .edit-course-button .trash-course-button {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10%;
+  }
+
   </style>
   
   <Navbar />
@@ -310,31 +396,37 @@ $: filteredCourses = courses.filter(course =>
 	<button class="add-course-button" on:click={() => addcourse()}><i class="fas fa-plus"></i></button>
 
 	{#if filteredCourses.length > 0}
-		{#each filteredCourses as course (course.course_id)}
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
-		  <div class="course-info">
-			<p class="course-name">Course: {course.course_name}</p>
-			<p class="course-description">{course.description}</p>
-			<div class="rating-info">
-			  <div class="rating">
-				<p class="rating-label">Difficulty:</p>
-				<p class="rating-value">{hoveredCourse ? hoveredCourse.r1.toFixed(2) : ''}</p>
-				</div>
-			  <div class="rating">
-				<p class="rating-label">Interest:</p>
-				<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
-										  </div>
-			  <div class="rating">
-				<p class="rating-label">Teaching Style:</p>
-				
-				<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
-			  </div>
-			</div>
+	{#each filteredCourses as course (course.course_id)}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
+	  <div class="course-info">
+		<p class="course-name">Course: {course.course_name}</p>
+		<p class="course-description">{course.description}</p>
+		<div class="rating-info">
+		  <div class="rating">
+			<p class="rating-label">Difficulty:</p>
+			<p class="rating-value">{hoveredCourse ? hoveredCourse.r1.toFixed(2) : ''}</p>
 		  </div>
-		  <button on:click={() => handleButtonClick(course)}>Rate</button>
+		  <div class="rating">
+			<p class="rating-label">Interest:</p>
+			<p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
+		  </div>
+		  <div class="rating">
+			<p class="rating-label">Teaching Style:</p>
+			<p class="rating-value">{hoveredCourse ? hoveredCourse.r3 : ''}</p>
+		  </div>
 		</div>
-	  {/each}
+	  </div>
+	  <div class="button-group">
+		<button class="rate-course-button" on:click={() => handleButtonClick(course)}>Rate</button>
+		<button class="edit-course-button" on:click={() => editcourse(course)}>
+			<i class="fas fa-edit"></i>
+		  </button>
+			<button class="trash-course-button" on:click={() => deletecourse(course)}><i class="fas fa-trash"></i></button>
+	  </div>
+	</div>
+  {/each}
+  
 	{:else}
 	  <p class="no-courses">No courses available.</p>
 	{/if}
@@ -342,6 +434,8 @@ $: filteredCourses = courses.filter(course =>
 	  
 	  <Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} bind:studentId={selectedStudentId} />
 	  <Modal2 bind:isOpen={showModal2} bind:studentId={selectedStudentId}/>
+	  <Modal3 bind:isOpen={showModal3} bind:courseName={selectedCourseName} bind:description={selectedDescription} bind:prereq={selectedPrereq}  bind:difficultyRating={selectedr1} bind:interestRating={selectedr2} bind:teachingStyle={selectedr3}/>
+
 
 		
   </main>
