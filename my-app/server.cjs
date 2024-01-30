@@ -114,6 +114,7 @@ app.get('/api/getStudentCourses', async (req, res) => {
         INNER JOIN course c ON scxr.course_id = c.course_id
       WHERE
         scxr.stu_id = ?
+        AND c.active = 1
     `, [studentId]);
 
       if (rows.length > 0) {
@@ -242,6 +243,46 @@ app.post('/api/students', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
   });
+
+  app.post('/api/updateCourse', async (req, res) => {
+    const { courseId, courseName, active, description, prereq } = req.body;
+    try {
+      const connection = await createConnection();
+  
+      try {
+        
+        const updateQuery = `
+          UPDATE course
+          SET course_name = ?, active = ?, description = ?, prereq = ?
+          WHERE course_id = ?
+        `;
+  
+        const updateValues = [courseName, active, description, prereq, courseId];
+  
+        const [updateResult] = await connection.execute(updateQuery, updateValues);
+  
+        if (updateResult.affectedRows > 0) {
+          console.log('Ratings updated successfully');
+          res.status(200).json({ message: 'Ratings updated successfully' });
+        } else {
+          res.status(404).json({ error: 'Student or course not found' });
+        }
+      } finally {
+        connection.end();
+      }
+    } catch (error) {
+      console.error('Error updating ratings:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
+
+
+
+
+
+
 
 
 app.post('/api/getCourseTags', async (req, res) => {

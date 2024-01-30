@@ -6,6 +6,7 @@
   import { onMount } from 'svelte';
 
   export let isOpen = false;
+  export let courseId= 0;
   export let courseName = '';
   export let description = '';
   export let prereq='';
@@ -52,12 +53,8 @@
 
     function submit() {
   const testData = {
-    studentId: studentId,
+    courseId: courseId,
     courseName: courseName,
-    teacherId: 1,
-    r1: difficultyRating, 
-    r2: interestRating,
-    r3: teachingStyle,
     active: isActive ? 1 : 0,
     description: description,
     prereq: prereq,
@@ -65,7 +62,7 @@
 
   console.log('Sending data:', testData);
 
-  fetch('http://localhost:3000/api/addStudentCourse', {
+  fetch('http://localhost:3000/api/updateCourse', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -116,49 +113,6 @@
         </div>
       </div>      
       
-      
-      <div class="survey-question">
-      <label>Difficulty:</label>
-      
-      <div class="star-rating">
-    
-      {#each [1, 2, 3, 4, 5] as starNumber}
-        <input type="radio" id={"difficultyStar"+starNumber} name="rating1" value={starNumber} bind:group={difficultyRating} />
-        <label for={"difficultyStar"+starNumber} on:click={() => setDifficultyRating(starNumber)}>
-          <i class="{difficultyRating >= starNumber ? 'fas' : 'far'} fa-star"></i> 
-        </label>
-      {/each}
-    
-      </div>
-    </div>
-    
-    <div class="survey-question">
-    
-      <label>Interest:</label>
-      
-      <div class="star-rating">
-    
-      {#each [6, 7, 8, 9, 10] as starNumber}
-        <input type="radio" id={"interestStar"+starNumber} name="rating2" value={starNumber - 5} bind:group={interestRating} />
-        <label for={"interestStar"+starNumber} on:click={() => setInterestRating(starNumber)}>
-          <i class="{interestRating >= (starNumber - 5) ? 'fas' : 'far'} fa-star"></i>
-        </label>
-      {/each}
-    
-      </div>
-    
-    </div>        
-    <div class="survey-question">
-      <label>Teaching style:</label>
-      {#each teachingStyles as style}
-        <div class="checkbox-option">
-          <input class="checkbox"type="checkbox" id={style} bind:group={teachingStyle} value={style} />
-          <label for={style}></label>
-          <span>{style}</span>
-        </div>
-      {/each}
-    </div>
-        
       <button class="close-button" on:click={closeModal}>
         <i class="fas fa-times"></i>
       </button>

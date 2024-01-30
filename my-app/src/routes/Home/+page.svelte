@@ -82,6 +82,9 @@ $: filteredCourses = courses.filter(course =>
 	let selectedr1 = 0;
 	let selectedr2 = 0;
 	let selectedr3 = '';
+	/**
+  /** @type {number} */
+	let courseId=0;
 
 /**
   /** @type {string | undefined} */
@@ -109,8 +112,9 @@ $: filteredCourses = courses.filter(course =>
    *    * @param {number} r1
    *    * @param {number} r2
    *    * @param {string} r3
+   *    *    * @param {number} course_id
    */
-   function openModal3(courseName, description, prereq, r1, r2, r3) {
+   function openModal3(courseName, description, prereq, r1, r2, r3, course_id) {
 	selectedCourseName = courseName;
 	selectedDescription = description;
 	selectedPrereq = prereq;
@@ -118,6 +122,7 @@ $: filteredCourses = courses.filter(course =>
 	selectedr2 = r2;
 	selectedr3 = r3;
 	showModal3 = true;
+	courseId = course_id;
   }
 
 
@@ -178,7 +183,7 @@ $: filteredCourses = courses.filter(course =>
 	 * @param {Course} course
 	 */
 	function editcourse(course) {
-    openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3);
+    openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3, course.course_id);
 	}
 
 </script>
@@ -435,7 +440,7 @@ $: filteredCourses = courses.filter(course =>
 	  
 	  <Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} bind:studentId={selectedStudentId} />
 	  <Modal2 bind:isOpen={showModal2} bind:studentId={selectedStudentId}/>
-	  <Modal3 bind:isOpen={showModal3} bind:courseName={selectedCourseName} bind:description={selectedDescription} bind:prereq={selectedPrereq}  bind:difficultyRating={selectedr1} bind:interestRating={selectedr2} bind:teachingStyle={selectedr3}/>
+	  <Modal3 bind:isOpen={showModal3} bind:courseName={selectedCourseName} bind:description={selectedDescription} bind:prereq={selectedPrereq}  bind:difficultyRating={selectedr1} bind:interestRating={selectedr2} bind:teachingStyle={selectedr3} bind:courseId={courseId}/>
 
 
 		
