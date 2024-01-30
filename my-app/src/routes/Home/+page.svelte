@@ -251,6 +251,7 @@ $: filteredCourses = courses.filter(course =>
 	  color: #B2A59B;
 	  font-family: 'Indie Flower', cursive;
 	  font-size: 1.4rem;
+	  max-width: 85%;
 	}
   
 	.no-courses {
