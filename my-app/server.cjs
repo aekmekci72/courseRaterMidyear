@@ -380,6 +380,67 @@ app.get('/api/recs', async (req, res) => {
   }
 });
 
+app.delete('/api/deleteCourse', async (req, res) => {
+  const { courseId } = req.query;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [existingCourse] = await connection.execute('SELECT * FROM course WHERE course_id = ?', [courseId]);
+
+      if (existingCourse.length === 0) {
+        return res.status(404).json({ error: 'Course not found' });
+      }
+
+      await connection.execute('DELETE FROM course WHERE course_id = ?', [courseId]);
+
+      await connection.execute('DELETE FROM stuCourseXRef WHERE course_id = ?', [courseId]);
+
+      res.json({ success: true });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error deleting course:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// app.get('/api/getCourseDetails', async (req, res) => {
+//   try {
+//     const { courseId } = req.query;
+
+//     if (!courseId) {
+//       return res.status(400).json({ error: 'Missing courseId parameter' });
+//     }
+
+//     const connection = await createConnection();
+
+//     try {
+//       const [rows] = await connection.execute(`
+//         SELECT course.*, GROUP_CONCAT(tag) AS tags
+//         FROM course
+//         LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+//         WHERE course.course_id = ?
+//         GROUP BY course.course_id
+//       `, [courseId]);
+
+//       if (rows.length === 0) {
+//         return res.status(404).json({ error: 'Course not found' });
+//       }
+
+//       console.log(rows);
+//       res.json(rows[0]); // Assuming you want to return details for a single course
+//     } finally {
+//       connection.end();
+//     }
+//   } catch (error) {
+//     console.error('Error fetching course details:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
