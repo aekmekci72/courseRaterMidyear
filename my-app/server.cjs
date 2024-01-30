@@ -301,18 +301,22 @@ app.get('/api/recs', async (req, res) => {
 
     try {
       const [averageRatings] = await connection.execute(`
-        SELECT
-          scxr.course_id,
-          AVG(scxr.r1) AS avg_r1,
-          AVG(scxr.r2) AS avg_r2
-        FROM
-          stuCourseXRef scxr
-          LEFT JOIN student s ON scxr.stu_id = s.stu_id
-        WHERE
-          s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
-        GROUP BY
-          scxr.course_id;
-      `, [studentId]);
+      SELECT
+  c.course_id,
+  COALESCE(AVG(IFNULL(scxr.r1, 0)), 0) AS avg_r1,
+  COALESCE(AVG(IFNULL(scxr.r2, 0)), 0) AS avg_r2
+FROM
+  course c
+  LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
+  LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+GROUP BY
+  c.course_id;
+
+
+
+      `, [studentId, studentId]);
+
+
 
       console.log('Average Ratings of Same Academy:', averageRatings);
 
@@ -330,67 +334,62 @@ app.get('/api/recs', async (req, res) => {
       console.log('Preferred Tags:', preferredTags);
 
       const [recommendedCourses] = await connection.execute(`
-        SELECT
-          avgRatings.course_id,
-          avgRatings.avg_r1,
-          avgRatings.avg_r2,
-          COALESCE(prereqStatus.taken, 0) AS prerequisite_taken,
-          COALESCE(course.active, 0) AS course_active
-        FROM
-          (SELECT
-            scxr.course_id,
-            AVG(scxr.r1) AS avg_r1,
-            AVG(scxr.r2) AS avg_r2
-          FROM
-            stuCourseXRef scxr
-            LEFT JOIN student s ON scxr.stu_id = s.stu_id
-          WHERE
-            s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
-          GROUP BY
-            scxr.course_id) AS avgRatings
-        LEFT JOIN
-          (SELECT
-            pc.course_id,
-            1 AS taken
-          FROM
-            stuCourseXRef pc
-          WHERE
-            pc.stu_id = ?
-            AND pc.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)) AS prereqStatus
-        ON avgRatings.course_id = prereqStatus.course_id
-        LEFT JOIN
-          course
-        ON avgRatings.course_id = course.course_id
-        WHERE
-          COALESCE(prereqStatus.taken, 0) = 0 -- Exclude courses already taken
-          AND COALESCE(course.active, 0) = 1 -- Include only active courses
-        ORDER BY
-          (avgRatings.avg_r1 + avgRatings.avg_r2) DESC
-        LIMIT 5;
-      `, [studentId, studentId, studentId]);
+      SELECT
+      course.course_id,
+      course.course_name,
+      course.teacher_id,
+      AVG(IFNULL(stuCourseXRef.r1, 0)) AS r1,
+      AVG(IFNULL(stuCourseXRef.r2, 0)) AS r2,
+      (
+        SELECT r3
+        FROM stuCourseXRef
+        WHERE course.course_id = stuCourseXRef.course_id
+        GROUP BY r3
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+      ) AS avg_r3,
+      course.active,
+      course.description,
+      course.prereq
+    FROM
+      course
+      LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
+      LEFT JOIN student ON stuCourseXRef.stu_id = student.stu_id
+    WHERE
+      student.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+      AND (stuCourseXRef.stu_id IS NULL OR stuCourseXRef.stu_id != ?) -- Exclude courses the student is already taking
+    GROUP BY
+      course.course_id
+    ORDER BY
+      (r1 + r2) DESC
+    LIMIT 5;
+    
+
+
+    
+      `, [studentId, studentId]);
 
       console.log('Recommended Courses:', recommendedCourses);
       const detailedRecommendations = await Promise.all(recommendedCourses.map(async (course) => {
         const [courseDetails] = await connection.execute(`
-        SELECT
-  course.*,
-  GROUP_CONCAT(tag) AS tags,
-  AVG(stuCourseXRef.r1) AS r1,
-  AVG(stuCourseXRef.r2) AS r2,
-  (
-    SELECT r3
-    FROM stuCourseXRef
-    WHERE course.course_id = stuCourseXRef.course_id
-    GROUP BY r3
-    ORDER BY COUNT(*) DESC
-    LIMIT 1
-  ) AS r3
-FROM course
-LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
-LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
-WHERE course.course_id = ?
-GROUP BY course.course_id;
-
+          SELECT
+            course.*,
+            GROUP_CONCAT(tag) AS tags,
+            AVG(stuCourseXRef.r1) AS r1,
+            AVG(stuCourseXRef.r2) AS r2,
+            (
+              SELECT r3
+              FROM stuCourseXRef
+              WHERE course.course_id = stuCourseXRef.course_id
+              GROUP BY r3
+              ORDER BY COUNT(*) DESC
+              LIMIT 1
+            ) AS r3
+          FROM course
+          LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+          LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
+          WHERE course.course_id = ?
+          GROUP BY course.course_id;
         `, [course.course_id]);
 
         return { ...course, ...courseDetails[0] };
@@ -406,6 +405,7 @@ GROUP BY course.course_id;
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.delete('/api/deleteCourse', async (req, res) => {
   const { courseId } = req.query;
