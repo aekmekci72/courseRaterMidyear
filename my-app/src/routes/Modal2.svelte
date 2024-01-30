@@ -50,19 +50,21 @@
     }
 
     function submit() {
-    const testData = {
-      studentId: '2',
-      courseName: courseName,
-      teacherId: 1,
-      r1: difficultyRating, 
-      r2: interestRating,
-      r3: teachingStyle,
-      active: isActive ? 1 : 0,
-      description: descriptionInput,
-      prereq: prereq,
-    };
+  const testData = {
+    studentId: studentId,
+    courseName: courseName,
+    teacherId: 1,
+    r1: difficultyRating, 
+    r2: interestRating,
+    r3: teachingStyle,
+    active: isActive ? 1 : 0,
+    description: descriptionInput,
+    prereq: prereq,
+  };
 
-    fetch('http://localhost:3000/api/addStudentCourse', {
+  console.log('Sending data:', testData);
+
+  fetch('http://localhost:3000/api/addStudentCourse', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -80,8 +82,8 @@
       console.error('Error adding test course:', error);
     });
 
-closeModal();
-  }
+  closeModal();
+}
 </script>
 
 {#if isOpen}

@@ -340,7 +340,7 @@ $: filteredCourses = courses.filter(course =>
 
 	  
 	  <Modal bind:isOpen={showModal} bind:courseName={selectedCourseName} bind:studentId={selectedStudentId} />
-	  <Modal2 bind:isOpen={showModal2} />
+	  <Modal2 bind:isOpen={showModal2} bind:studentId={selectedStudentId}/>
 
 		
   </main>
