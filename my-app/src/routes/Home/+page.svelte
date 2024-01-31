@@ -174,11 +174,6 @@ $: filteredCourses = courses.filter(course =>
 	  hoveredCourse = null;
 	}
 
-	function addcourse() {
-    const studentId = localStorage.getItem('selectedStudentId');
-    openModal2(studentId || undefined);
-
-	}
 
 	      	/**
 	 * @param {Course} course
@@ -435,8 +430,6 @@ $: filteredCourses = courses.filter(course =>
 
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
-
-	<button class="add-course-button" on:click={() => addcourse()}><i class="fas fa-plus"></i></button>
 
 	{#if filteredCourses.length > 0}
 	{#each filteredCourses as course (course.course_id)}
