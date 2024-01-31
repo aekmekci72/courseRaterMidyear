@@ -141,11 +141,10 @@ $: filteredCourses = courses.filter(course =>
   const confirmDelete = confirm(`Are you sure you want to delete the course "${course.course_name}"?`);
 
   if (confirmDelete) {
-    // Perform the deletion logic, such as making an API request to delete the course
     const courseId = course.course_id;
+	const studentId = localStorage.getItem('selectedStudentId')
 
-    // Make an API request to delete the course
-    fetch(`http://localhost:3000/api/deleteCourse?courseId=${courseId}`, {
+    fetch(`http://localhost:3000/api/deleteCourse?courseId=${courseId}&studentId=${studentId}`, {
       method: 'DELETE',
     })
       .then(response => {

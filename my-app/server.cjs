@@ -468,23 +468,17 @@ GROUP BY
 });
 
 app.delete('/api/deleteCourse', async (req, res) => {
-  const { courseId } = req.query;
+  const { courseId, studentId } = req.query;
 
   try {
     const connection = await createConnection();
 
     try {
-      const [existingCourse] = await connection.execute('SELECT * FROM course WHERE course_id = ?', [courseId]);
 
-      if (existingCourse.length === 0) {
-        return res.status(404).json({ error: 'Course not found' });
-      }
+      await connection.execute('DELETE FROM stuCourseXRef WHERE course_id = ? AND stu_id = ?', [courseId, studentId]);
 
-      await connection.execute('DELETE FROM course WHERE course_id = ?', [courseId]);
 
-      await connection.execute('DELETE FROM stuCourseXRef WHERE course_id = ?', [courseId]);
-
-      res.json({ succesas: true });
+      res.json({ success: true });
     } finally {
       connection.end();
     }
@@ -568,6 +562,74 @@ app.get('/api/getPastStudentCourses', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+app.post('/api/getCourseRatingsPercentage', async (req, res) => {
+  const { courseName, studentId } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [totalPercentageResult] = await connection.execute(`
+        SELECT
+          COUNT(*) AS totalStudents,
+          COUNT(CASE WHEN r1 >= 3 THEN 1 END) AS studentsRatedR1,
+          COUNT(CASE WHEN r2 >= 3 THEN 1 END) AS studentsRatedR2
+        FROM stuCourseXRef
+        WHERE course_id = (SELECT course_id FROM course WHERE course_name = ?)
+      `, [courseName]);
+
+      const totalStudents = totalPercentageResult[0].totalStudents;
+      const studentsRatedR1 = totalPercentageResult[0].studentsRatedR1;
+      const studentsRatedR2 = totalPercentageResult[0].studentsRatedR2;
+
+      const percentageR1 = (studentsRatedR1 / totalStudents) * 100;
+      const percentageR2 = (studentsRatedR2 / totalStudents) * 100;
+
+      const [academyPercentageResult] = await connection.execute(`
+        SELECT
+          COUNT(*) AS academyStudents,
+          COUNT(CASE WHEN r1 >= 3 THEN 1 END) AS academyStudentsRatedR1,
+          COUNT(CASE WHEN r2 >= 3 THEN 1 END) AS academyStudentsRatedR2
+        FROM stuCourseXRef
+        WHERE course_id = (SELECT course_id FROM course WHERE course_name = ?)
+          AND stu_id != ?
+          AND stu_id IN (SELECT stu_id FROM student WHERE stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?))
+      `, [courseName, studentId, studentId]);
+
+      const academyStudents = academyPercentageResult[0].academyStudents;
+      const academyStudentsRatedR1 = academyPercentageResult[0].academyStudentsRatedR1;
+      const academyStudentsRatedR2 = academyPercentageResult[0].academyStudentsRatedR2;
+
+      const academyPercentageR1 = (academyStudentsRatedR1 / academyStudents) * 100;
+      const academyPercentageR2 = (academyStudentsRatedR2 / academyStudents) * 100;
+
+      res.json({
+        percentageR1: percentageR1.toFixed(2),
+        percentageR2: percentageR2.toFixed(2),
+        academyPercentageR1: academyPercentageR1.toFixed(2),
+        academyPercentageR2: academyPercentageR2.toFixed(2),
+      });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error fetching course ratings percentage:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(PORT, () => {

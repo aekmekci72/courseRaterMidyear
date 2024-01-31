@@ -15,7 +15,7 @@
 	 * @property {number} totalAvg
 	 */
   
-	import Modal from '../Modallookup.svelte';
+	import Modal from '../ModalRecs.svelte';
 	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
   
@@ -186,9 +186,9 @@
 	{/if}
   
 	<!-- Modal -->
-  {#if showModal}
-    <Modal bind:isOpen={showModal} bind:course={selectedCourse} />
-  {/if}
+	{#if showModal}
+		<Modal bind:isOpen={showModal} bind:course={selectedCourse}  />
+  	{/if}
 	
 	<style>
 	  .course-card {
