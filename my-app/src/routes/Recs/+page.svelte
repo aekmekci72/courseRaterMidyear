@@ -165,6 +165,11 @@
         border-color: #5E4B35; /* Change border color on focus */
     }
 
+	.additional-info {
+	  color: #B2A59B; /* Darkened text color for better readability */
+	  font-family: 'Indie Flower', cursive;
+	}
+
   </style>
   
   <Navbar />

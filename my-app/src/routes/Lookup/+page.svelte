@@ -236,6 +236,15 @@ async function addStudentToCourse(studentId, courseId) {
 	font-family: 'Indie Flower', cursive;
 }
 
+.add-tag-button {
+  font-family: 'Indie Flower', cursive;
+  margin-left: .5%;
+}
+.add-course-button{
+  font-family: 'Indie Flower', cursive;
+  margin-left: 2%;
+}
+
   </style>
   
   <Navbar />
@@ -250,7 +259,7 @@ async function addStudentToCourse(studentId, courseId) {
     {/each}
   </select>
   
-  <button on:click={addSelectedTagManually}>+</button>
+  <button on:click={addSelectedTagManually} class="add-tag-button">+</button>
   
   {#each selectedTags as tag (tag)}
     <div class="tag-tab">
@@ -271,7 +280,7 @@ async function addStudentToCourse(studentId, courseId) {
 			<p class="course-description">{course.description}</p>
 		  </div>
 		  <button on:click={() => handleButtonClick(course)}>Learn More</button>
-		  <button on:click={() => {
+		  <button class="add-course-button" on:click={() => {
 			const studentId = localStorage.getItem('selectedStudentId');
 			if (studentId !== null) {
 			  addStudentToCourse(parseInt(studentId), course.course_id);
