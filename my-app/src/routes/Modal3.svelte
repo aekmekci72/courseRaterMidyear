@@ -54,7 +54,7 @@
     function submit() {
   const testData = {
     courseId: courseId,
-    studentId: studentId,
+    studentId: localStorage.getItem('selectedStudentId'),
     active: isActive ? 1 : 0
   };
 
