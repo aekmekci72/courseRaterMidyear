@@ -186,36 +186,37 @@ $: filteredCourses = courses.filter(course =>
 	function editcourse(course) {
     openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3, course.course_id);
 	}
-/**
- * @type {Array<Course>}
- */
- let pastCourses = [];
+// /**
+//  * @type {Array<Course>}
+//  */
+//  let pastCourses = [];
 
- function getPastStudentCourses() {
-  const studentId = selectedStudentId; 
+//  async function getPastStudentCourses() {
+//   const studentId = selectedStudentId;
 
-  fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`)
-	.then(response => response.json())
-	.then(data => {
-	  if (Array.isArray(data) && data.length > 0) {
-		pastCourses = data;
-	  } else {
-		pastCourses = [];
-	  }
-	})
-	.catch(error => {
-	  console.error('Error fetching past student courses:', error);
-	});
-}
+//   try {
+//     const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`);
+//     const data = await response.json();
 
-getPastStudentCourses();
+//     if (Array.isArray(data) && data.length > 0) {
+//       pastCourses = data;
+//     } else {
+//       pastCourses = [];
+//     }
 
+//     console.log(pastCourses); // Log the updated pastCourses here
+//   } catch (error) {
+//     console.error('Error fetching past student courses:', error);
+//   }
+// }
 
-let showPastCourses = false;
+// getPastStudentCourses();
 
-function togglePastCourses() {
-  showPastCourses = !showPastCourses;
-}
+// let showPastCourses = false;
+
+// function togglePastCourses() {
+//   showPastCourses = !showPastCourses;
+// }
 
 
 </script>
@@ -420,6 +421,10 @@ function togglePastCourses() {
 	margin-bottom: 10%;
   }
 
+  .no-courses{
+	margin-bottom: 3%;
+  }
+
   </style>
   
   <Navbar />
@@ -473,7 +478,7 @@ function togglePastCourses() {
 	</div>
   {/each}
 
-
+<!-- 
   <button class="no-courses" on:click={togglePastCourses}>
     {#if showPastCourses}
       Hide past courses
@@ -483,18 +488,44 @@ function togglePastCourses() {
   </button>
 
   {#if showPastCourses && pastCourses.length > 0}
-    {#each pastCourses as course (course.course_id)}
-      <!-- Render past courses here -->
-      <div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
-        <!-- ... (rest of the course card code) -->
+  {#each pastCourses as course (course.course_id)}
+    <div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
+      <div class="course-info">
+        <p class="course-name">Course: {course.course_name}</p>
+        <p class="course-description">{course.description}</p>
+        <div class="rating-info">
+          <div class="rating">
+            <p class="rating-label">Difficulty:</p>
+            <p class="rating-value">{hoveredCourse ? hoveredCourse.r1.toFixed(2) : ''}</p>
+          </div>
+          <div class="rating">
+            <p class="rating-label">Interest:</p>
+            <p class="rating-value">{hoveredCourse ? hoveredCourse.r2.toFixed(2) : ''}</p>
+          </div>
+
+          <div class="rating">
+            <p class="rating-label">Teaching Style:</p>
+            {#if hoveredCourse && hoveredCourse.r3.trim() !== ''}
+              {#each JSON.parse(hoveredCourse.r3) as style (style)}
+                <p class="rating-value">{style}</p>
+              {/each}
+            {:else}
+              <p class="rating-value">Na</p>
+            {/if}
+          </div>		
+        </div>
       </div>
-    {/each}
-  {:else}
-    <!-- Render a message when there are no past courses or they are hidden -->
-    <div>
-      <p class="no-courses">No past courses available.</p>
+
+      <div class="button-group">
+        <button class="edit-course-button" on:click={() => editcourse(course)}>
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="trash-course-button" on:click={() => deletecourse(course)}><i class="fas fa-trash"></i></button>
+      </div>
     </div>
-  {/if}
+  {/each}
+{:else}
+{/if} -->
 
   
 	{:else}

@@ -494,39 +494,39 @@ app.delete('/api/deleteCourse', async (req, res) => {
   }
 });
 
-// app.get('/api/getCourseDetails', async (req, res) => {
-//   try {
-//     const { courseId } = req.query;
+app.get('/api/getCourseDetails', async (req, res) => {
+  try {
+    const { courseId } = req.query;
 
-//     if (!courseId) {
-//       return res.status(400).json({ error: 'Missing courseId parameter' });
-//     }
+    if (!courseId) {
+      return res.status(400).json({ error: 'Missing courseId parameter' });
+    }
 
-//     const connection = await createConnection();
+    const connection = await createConnection();
 
-//     try {
-//       const [rows] = await connection.execute(`
-//         SELECT course.*, GROUP_CONCAT(tag) AS tags
-//         FROM course
-//         LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
-//         WHERE course.course_id = ?
-//         GROUP BY course.course_id
-//       `, [courseId]);
+    try {
+      const [rows] = await connection.execute(`
+        SELECT course.*, GROUP_CONCAT(tag) AS tags
+        FROM course
+        LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
+        WHERE course.course_id = ?
+        GROUP BY course.course_id
+      `, [courseId]);
 
-//       if (rows.length === 0) {
-//         return res.status(404).json({ error: 'Course not found' });
-//       }
+      if (rows.length === 0) {
+        return res.status(404).json({ error: 'Course not found' });
+      }
 
-//       console.log(rows);
-//       res.json(rows[0]); // Assuming you want to return details for a single course
-//     } finally {
-//       connection.end();
-//     }
-//   } catch (error) {
-//     console.error('Error fetching course details:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+      console.log(rows);
+      res.json(rows[0]); // Assuming you want to return details for a single course
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error fetching course details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 app.get('/api/getPastStudentCourses', async (req, res) => {
@@ -552,6 +552,7 @@ app.get('/api/getPastStudentCourses', async (req, res) => {
         INNER JOIN course c ON scxr.course_id = c.course_id
       WHERE
         scxr.stu_id = ?
+        AND c.active = 0
     `, [studentId]);
 
       if (rows.length > 0) {
