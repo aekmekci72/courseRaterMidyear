@@ -182,37 +182,37 @@ $: filteredCourses = courses.filter(course =>
 	function editcourse(course) {
     openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3, course.course_id);
 	}
-// /**
-//  * @type {Array<Course>}
-//  */
-//  let pastCourses = [];
+/**
+ * @type {Array<Course>}
+ */
+ let pastCourses = [];
 
-//  async function getPastStudentCourses() {
-//   const studentId = selectedStudentId;
+ async function getPastStudentCourses() {
+  const studentId = selectedStudentId;
 
-//   try {
-//     const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`);
-//     const data = await response.json();
+  try {
+    const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`);
+    const data = await response.json();
 
-//     if (Array.isArray(data) && data.length > 0) {
-//       pastCourses = data;
-//     } else {
-//       pastCourses = [];
-//     }
+    if (Array.isArray(data) && data.length > 0) {
+      pastCourses = data;
+    } else {
+      pastCourses = [];
+    }
 
-//     console.log(pastCourses); // Log the updated pastCourses here
-//   } catch (error) {
-//     console.error('Error fetching past student courses:', error);
-//   }
-// }
+    console.log(pastCourses); // Log the updated pastCourses here
+  } catch (error) {
+    console.error('Error fetching past student courses:', error);
+  }
+}
 
-// getPastStudentCourses();
+getPastStudentCourses();
 
-// let showPastCourses = false;
+let showPastCourses = false;
 
-// function togglePastCourses() {
-//   showPastCourses = !showPastCourses;
-// }
+function togglePastCourses() {
+  showPastCourses = !showPastCourses;
+}
 
 
 </script>
@@ -473,7 +473,7 @@ $: filteredCourses = courses.filter(course =>
 	</div>
   {/each}
 
-<!-- 
+
   <button class="no-courses" on:click={togglePastCourses}>
     {#if showPastCourses}
       Hide past courses
@@ -520,7 +520,7 @@ $: filteredCourses = courses.filter(course =>
     </div>
   {/each}
 {:else}
-{/if} -->
+{/if}
 
   
 	{:else}
