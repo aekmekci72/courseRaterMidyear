@@ -129,6 +129,12 @@
 	  font-family: 'Indie Flower', cursive;
 	  font-size: 1.4rem;
 	}
+
+	.additional_info {
+	  color: #B2A59B; /* Darkened text color for better readability */
+	  font-family: 'Indie Flower', cursive;
+	  font-size: 1.4rem;
+	}
 	
 	.no-courses {
 	  color: red;
