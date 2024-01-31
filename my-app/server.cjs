@@ -329,39 +329,34 @@ app.get('/api/recs', async (req, res) => {
 
     try {
       const [averageRatings] = await connection.execute(`
-      SELECT
-  c.course_id,
-  COALESCE(AVG(IFNULL(scxr.r1, 0)), 0) AS avg_r1,
-  COALESCE(AVG(IFNULL(scxr.r2, 0)), 0) AS avg_r2
-FROM
-  course c
-  LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
-  LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
-WHERE
-      s.stu_id != ? AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+  SELECT
+    c.course_id,
+    COALESCE(AVG(NULLIF(IFNULL(scxr.r1, 0), 0)), 0) AS avg_r1,
+    COALESCE(AVG(NULLIF(IFNULL(scxr.r2, 0), 0)), 0) AS avg_r2
+  FROM
+    course c
+    LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
+    LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
+  WHERE
+    s.stu_id != ? AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
   GROUP BY
-  c.course_id;
+    c.course_id;
+`, [studentId, studentId, studentId]);
 
 
-
-      `, [studentId, studentId, studentId]);
-
-
-      const [averagetotalRatings] = await connection.execute(`
-      SELECT
+const [averagetotalRatings] = await connection.execute(`
+SELECT
   c.course_id,
-  COALESCE(AVG(IFNULL(scxr.r1, 0)), 0) AS avg_r1,
-  COALESCE(AVG(IFNULL(scxr.r2, 0)), 0) AS avg_r2
+  COALESCE(AVG(NULLIF(IFNULL(scxr.r1, 0), 0)), 0) AS avg_r1,
+  COALESCE(AVG(NULLIF(IFNULL(scxr.r2, 0), 0)), 0) AS avg_r2
 FROM
   course c
   LEFT JOIN stuCourseXRef scxr ON c.course_id = scxr.course_id
   LEFT JOIN student s ON scxr.stu_id = s.stu_id AND s.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
 GROUP BY
   c.course_id;
+`, [studentId]);
 
-
-
-      `, [studentId, studentId]);
 
 
       console.log('Average Ratings of Same Academy:', averageRatings);
