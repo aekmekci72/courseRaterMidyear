@@ -627,9 +627,27 @@ app.post('/api/getCourseRatingsPercentage', async (req, res) => {
 
 
 
-
-
-
+app.post('/api/coursestudentadd', async (req, res) => {
+  const { studentId, courseId } = req.body;
+  console.log(studentId,courseId);
+      
+  try {
+    const connection = await createConnection();
+      
+    try {
+      
+      await connection.execute('INSERT INTO stuCourseXRef (stu_id, course_id) VALUES (?, ?)', [studentId, courseId]);
+      
+      
+      res.json({ success: true });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error deleting course:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 app.listen(PORT, () => {

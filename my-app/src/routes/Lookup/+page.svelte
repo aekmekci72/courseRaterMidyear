@@ -78,6 +78,34 @@ let selectedTags = [];
   }
 }
 
+    /**
+     * @param {number} studentId
+     * @param {number} courseId
+     */
+async function addStudentToCourse(studentId, courseId) {
+    try {
+      const response = await fetch('http://localhost:3000/api/coursestudentadd', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+			studentId: studentId,
+			courseId: courseId,
+        }),
+      });
+
+      if (response.ok) {
+        // Handle success if needed
+        console.log('Student added to course successfully');
+      } else {
+        console.error('Failed to add student to course:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding student to course:', error);
+    }
+  }
+
   function addSelectedTagManually() {
 	// Get the selected tag from the dropdown
 	const dropdown = document.getElementById('tag-dropdown');
@@ -243,6 +271,13 @@ let selectedTags = [];
 			<p class="course-description">{course.description}</p>
 		  </div>
 		  <button on:click={() => handleButtonClick(course)}>Learn More</button>
+		  <button on:click={() => {
+			const studentId = localStorage.getItem('selectedStudentId');
+			if (studentId !== null) {
+			  addStudentToCourse(parseInt(studentId), course.course_id);
+			}
+		  }}>+</button>
+		  
 		</div>
 	  {/each}
 	{:else}
@@ -254,54 +289,60 @@ let selectedTags = [];
     <Modal bind:isOpen={showModal} bind:course={selectedCourse} />
   {/if}
 	
-	<style>
-	  .course-card {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		background-color: #faf4f2;
-		padding: 1.5rem;
-		border-radius: 0.25rem;
-		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
-		margin-bottom: 2rem;
-		transition: transform 0.3s ease;
-		width: 50%;
-		margin-left: auto;
-		margin-right: auto;
-		text-align: left;
-	  }
+  <style>
+	.course-card {
+	  display: flex;
+	  justify-content: space-between; /* Align items to the right */
+	  align-items: center;
+	  background-color: #faf4f2;
+	  padding: 1.5rem;
+	  border-radius: 0.25rem;
+	  box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+	  margin-bottom: 2rem;
+	  transition: transform 0.3s ease;
+	  width: 50%;
+	  margin-left: auto;
+	  margin-right: auto;
+	  text-align: left;
+	}
   
-	  .course-card:hover {
-		transform: translateY(-5px); 
-	  }
+	.course-card:hover {
+	  transform: translateY(-5px);
+	}
   
-	  .course-name {
-		font-size: 1.8rem;
-		font-weight: bold;
-		font-family: 'Indie Flower', cursive;
-		color: #bf7e71; /* Darkened text color for better readability */
-	  }
+	.course-info {
+	  flex-grow: 1; /* Allow course-info to take up available space */
+	}
   
-	  .course-description {
-		color: #B2A59B; /* Darkened text color for better readability */
-		font-family: 'Indie Flower', cursive;
-		font-size: 1.4rem;
-	  }
+	.course-name {
+	  font-size: 1.8rem;
+	  font-weight: bold;
+	  font-family: 'Indie Flower', cursive;
+	  color: #bf7e71; /* Darkened text color for better readability */
+	}
   
-	  .no-courses {
-		color: red;
-		font-family: 'Indie Flower', cursive;
-	  }
+	.course-description {
+	  color: #B2A59B; /* Darkened text color for better readability */
+	  font-family: 'Indie Flower', cursive;
+	  font-size: 1.4rem;
+	}
   
-	  button {
-		background-color: #FE502D;
-		color: white;
-		padding: 0.5rem 1rem;
-		border: none;
-		border-radius: 0.25rem;
-		cursor: pointer;
-		font-family: 'Indie Flower', cursive;
-	  }
-	</style>
+	.no-courses {
+	  color: red;
+	  font-family: 'Indie Flower', cursive;
+	}
+  
+	button {
+	  background-color: #FE502D;
+	  color: white;
+	  border: none;
+	  border-radius: 0.25rem;
+	  cursor: pointer;
+	  padding: 0.5rem 1rem;
+	  font-family: 'Indie Flower', cursive;
+	}
+  </style>
+  
+  
   </main>
   
