@@ -33,8 +33,10 @@ app.get('/api/courses', async (req, res) => {
             LIMIT 1
           ) AS r3
         FROM course
+        
         LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
         LEFT JOIN stuCourseXRef ON course.course_id = stuCourseXRef.course_id
+        WHERE course.active=1
         GROUP BY course.course_id
       `);
 
