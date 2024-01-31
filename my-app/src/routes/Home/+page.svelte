@@ -67,6 +67,24 @@ $: filteredCourses = courses.filter(course =>
   } catch (error) {
     console.error('Error fetching courses:', error);
   }
+  console.log(studentId);
+
+  try {
+	const studentId = localStorage.getItem('selectedStudentId');
+    const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`);
+   
+    const data = await response.json();
+
+    if (Array.isArray(data) && data.length > 0) {
+      pastCourses = data;
+    } else {
+      pastCourses = [];
+    }
+
+    console.log(pastCourses); // Log the updated pastCourses here
+  } catch (error) {
+    console.error('Error fetching past student courses:', error);
+  }
 });
 
   let showModal = false;
@@ -187,28 +205,7 @@ $: filteredCourses = courses.filter(course =>
  */
  let pastCourses = [];
 
- async function getPastStudentCourses() {
-  const studentId = selectedStudentId;
-  console.log(studentId);
 
-  try {
-    const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${localStorage.getItem('selectedStudentId')}`);
-   
-    const data = await response.json();
-
-    if (Array.isArray(data) && data.length > 0) {
-      pastCourses = data;
-    } else {
-      pastCourses = [];
-    }
-
-    console.log(pastCourses); // Log the updated pastCourses here
-  } catch (error) {
-    console.error('Error fetching past student courses:', error);
-  }
-}
-
-getPastStudentCourses();
 
 let showPastCourses = false;
 

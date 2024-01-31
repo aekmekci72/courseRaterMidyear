@@ -108,7 +108,7 @@ app.get('/api/getStudentCourses', async (req, res) => {
         scxr.r1,
         scxr.r2,
         scxr.r3,
-        c.active,
+        scxr.current,
         c.description,
         c.prereq
       FROM
@@ -116,7 +116,7 @@ app.get('/api/getStudentCourses', async (req, res) => {
         INNER JOIN course c ON scxr.course_id = c.course_id
       WHERE
         scxr.stu_id = ?
-        AND c.active = 1
+        AND scxr.current = 1
     `, [studentId]);
 
       if (rows.length > 0) {
@@ -261,19 +261,19 @@ app.post('/api/students', async (req, res) => {
   });
 
   app.post('/api/updateCourse', async (req, res) => {
-    const { courseId, courseName, active, description, prereq } = req.body;
+    const { courseId, studentId, active } = req.body;
     try {
       const connection = await createConnection();
   
       try {
         
         const updateQuery = `
-          UPDATE course
-          SET course_name = ?, active = ?, description = ?, prereq = ?
-          WHERE course_id = ?
+          UPDATE stuCourseXRef
+          SET current = ?
+          WHERE course_id = ? AND stu_id = ?;
         `;
   
-        const updateValues = [courseName, active, description, prereq, courseId];
+        const updateValues = [active, courseId, studentId];
   
         const [updateResult] = await connection.execute(updateQuery, updateValues);
   
@@ -534,7 +534,7 @@ app.get('/api/getPastStudentCourses', async (req, res) => {
         scxr.r1,
         scxr.r2,
         scxr.r3,
-        c.active,
+        scxr.current,
         c.description,
         c.prereq
       FROM
@@ -542,7 +542,7 @@ app.get('/api/getPastStudentCourses', async (req, res) => {
         INNER JOIN course c ON scxr.course_id = c.course_id
       WHERE
         scxr.stu_id = ?
-        AND c.active = 0
+        AND scxr.current = 0
     `, [studentId]);
 
       if (rows.length > 0) {

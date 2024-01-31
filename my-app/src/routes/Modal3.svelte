@@ -54,10 +54,8 @@
     function submit() {
   const testData = {
     courseId: courseId,
-    courseName: courseName,
-    active: isActive ? 1 : 0,
-    description: description,
-    prereq: prereq,
+    studentId: studentId,
+    active: isActive ? 1 : 0
   };
 
   console.log('Sending data:', testData);
@@ -91,21 +89,21 @@
   <div class="modal-content">
     <h2>{courseName}</h2>
 
-    <div class="survey-question">
+    <!-- <div class="survey-question">
         <label for="courseNameInput">Course Name:</label>
         <input type="text" class="inputs" id="courseNameInput" bind:value={courseName} />
-      </div>
-
+      </div> -->
+<!-- 
       <div class="survey-question">
         <label for="description">Description:</label>
         <input type="text" class="inputs" id="description" bind:value={description} />
-      </div>
-
+      </div> -->
+<!-- 
       <div class="Pre-Requisites">
         <label for="prereq">Pre-Requisites:</label>
         <input type="text" class="inputs" id="prereq" bind:value={prereq} />
       </div>
-          
+           -->
       <div class="survey-question">
         <label>Active:</label>
         <div class="checkbox-option">
