@@ -189,9 +189,11 @@ $: filteredCourses = courses.filter(course =>
 
  async function getPastStudentCourses() {
   const studentId = selectedStudentId;
+  console.log(studentId);
 
   try {
-    const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`);
+    const response = await fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${localStorage.getItem('selectedStudentId')}`);
+   
     const data = await response.json();
 
     if (Array.isArray(data) && data.length > 0) {

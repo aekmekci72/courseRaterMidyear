@@ -534,7 +534,6 @@ app.get('/api/getPastStudentCourses', async (req, res) => {
       SELECT
         scxr.course_id,
         c.course_name,
-        c.teacher_id,
         scxr.r1,
         scxr.r2,
         scxr.r3,
