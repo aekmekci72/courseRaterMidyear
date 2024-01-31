@@ -186,6 +186,37 @@ $: filteredCourses = courses.filter(course =>
 	function editcourse(course) {
     openModal3(course.course_name, course.description, course.prereq, course.r1, course.r2, course.r3, course.course_id);
 	}
+/**
+ * @type {Array<Course>}
+ */
+ let pastCourses = [];
+
+ function getPastStudentCourses() {
+  const studentId = selectedStudentId; 
+
+  fetch(`http://localhost:3000/api/getPastStudentCourses?studentId=${studentId}`)
+	.then(response => response.json())
+	.then(data => {
+	  if (Array.isArray(data) && data.length > 0) {
+		pastCourses = data;
+	  } else {
+		pastCourses = [];
+	  }
+	})
+	.catch(error => {
+	  console.error('Error fetching past student courses:', error);
+	});
+}
+
+getPastStudentCourses();
+
+
+let showPastCourses = false;
+
+function togglePastCourses() {
+  showPastCourses = !showPastCourses;
+}
+
 
 </script>
 
@@ -441,6 +472,30 @@ $: filteredCourses = courses.filter(course =>
 	  </div>
 	</div>
   {/each}
+
+
+  <button class="no-courses" on:click={togglePastCourses}>
+    {#if showPastCourses}
+      Hide past courses
+    {:else}
+      Show past courses
+    {/if}
+  </button>
+
+  {#if showPastCourses && pastCourses.length > 0}
+    {#each pastCourses as course (course.course_id)}
+      <!-- Render past courses here -->
+      <div class="course-card" on:mouseenter={() => showRatings(course)} on:mouseleave={() => hideRatings()}>
+        <!-- ... (rest of the course card code) -->
+      </div>
+    {/each}
+  {:else}
+    <!-- Render a message when there are no past courses or they are hidden -->
+    <div>
+      <p class="no-courses">No past courses available.</p>
+    </div>
+  {/if}
+
   
 	{:else}
 	  <p class="no-courses">No courses available.</p>

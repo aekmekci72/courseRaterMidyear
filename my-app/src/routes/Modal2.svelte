@@ -48,8 +48,15 @@
         teachingStyle = selectElement.value || '';
       }
     }
+    let errorMessage = ''; 
 
-    function submit() {
+
+      function submit() {
+    if (!courseName || !descriptionInput || !prereq || !teachingStyle || selectedTags.length === 0) {
+      errorMessage = 'Please fill out all required fields.';
+      return;
+    }
+
   const testData = {
     studentId: studentId,
     courseName: courseName,
@@ -242,6 +249,11 @@ let tagInput = ''; // Input value for tags
         </div>
       {/each}
     </div>
+
+    {#if errorMessage}
+    <div class="error-message">{errorMessage}</div>
+  {/if}
+
         
       <button class="close-button" on:click={closeModal}>
         <i class="fas fa-times"></i>
@@ -254,6 +266,10 @@ let tagInput = ''; // Input value for tags
 {/if}
 
 <style>
+
+  .error-message{
+    color: red;
+  }
   .tag-container {
     display: flex;
     flex-wrap: wrap;

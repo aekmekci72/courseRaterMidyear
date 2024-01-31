@@ -28,6 +28,8 @@
   let interestRating = 0;
   let teachingStyle = '';
 
+  let errorMessage = ''; 
+
 
   /** @type {(value: number) => void} */
   function setDifficultyRating(value) {
@@ -47,6 +49,12 @@
     }
 
   function submit(){
+
+    if (!courseName || !difficultyRating || !interestRating || !teachingStyle) {
+      errorMessage = 'Please fill out all required fields.';
+      return;
+    }
+
     const data = {
       studentId,
       courseName,
@@ -78,6 +86,7 @@
   interestRating = 0;
   teachingStyle = '';
 
+  location.reload();
     closeModal();
   }
 </script>
@@ -132,7 +141,10 @@
       <button class="close-button" on:click={closeModal}>
         <i class="fas fa-times"></i>
       </button>
-    
+      {#if errorMessage}
+      <div class="error-message">{errorMessage}</div>
+    {/if}
+  
 
       <button on:click={submit}>Submit</button>
     </div>
@@ -141,7 +153,9 @@
 
 <style>
 
-  
+  .error-message {
+    color: red;
+  }
 .checkbox-option {
     display: flex;
     align-items: center;

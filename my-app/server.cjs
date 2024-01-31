@@ -529,6 +529,46 @@ app.delete('/api/deleteCourse', async (req, res) => {
 // });
 
 
+app.get('/api/getPastStudentCourses', async (req, res) => {
+  const { studentId } = req.query;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [rows] = await connection.execute(`
+      SELECT
+        scxr.course_id,
+        c.course_name,
+        c.teacher_id,
+        scxr.r1,
+        scxr.r2,
+        scxr.r3,
+        c.active,
+        c.description,
+        c.prereq
+      FROM
+        stuCourseXRef scxr
+        INNER JOIN course c ON scxr.course_id = c.course_id
+      WHERE
+        scxr.stu_id = ?
+    `, [studentId]);
+
+      if (rows.length > 0) {
+        res.json(rows);
+      } else {
+        res.status(404).json({ error: 'Student not found' });
+      }
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error fetching student name by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
