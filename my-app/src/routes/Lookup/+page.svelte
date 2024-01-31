@@ -245,6 +245,61 @@ async function addStudentToCourse(studentId, courseId) {
   margin-left: 2%;
 }
 
+.tag-filter {
+  font-family: 'Indie Flower', cursive;
+  position: relative; /* Add position relative to make sure the dropdown is positioned relative to this container */
+}
+
+#tag-dropdown {
+  width: 150px; /* Set your desired width for the dropdown */
+  padding: 0.5rem; /* Adjust padding as needed */
+  border: 1px solid #B2A59B;
+  border-radius: 0.25rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Style the add-tag-button */
+.add-tag-button {
+  font-family: 'Indie Flower', cursive;
+  margin-left: 0.5%;
+}
+
+/* Style the tag-tabs */
+.tag-tab {
+  display: inline-block;
+  margin-right: 5px; /* Adjust margin as needed */
+  background-color: #F7F7F7;
+  padding: 0.2rem 0.5rem; /* Adjust padding as needed */
+  border: 1px solid #B2A59B;
+  border-radius: 0.25rem;
+}
+
+/* Style the search input */
+.search {
+  padding: 0.5rem;
+  width: 50%;
+  border: 1px solid #B2A59B;
+  border-radius: 0.25rem;
+  margin: 2rem;
+  color: #B2A59B;
+  background-color: #F7F7F7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+  font-family: 'Indie Flower', cursive;
+}
+
+/* Hover effect for the search input */
+.search:hover {
+  border-color: #FE502D;
+}
+
+/* Focus effect for the search input */
+.search:focus {
+  outline: none;
+  border-color: #5E4B35;
+}
+
   </style>
   
   <Navbar />
