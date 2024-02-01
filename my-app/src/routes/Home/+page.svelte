@@ -181,7 +181,8 @@ $: filteredCourses = courses.filter(course =>
   }
 }
 
-  
+
+
 	/**
 	 * @param {Course} course
 	 */
@@ -213,6 +214,20 @@ function togglePastCourses() {
   showPastCourses = !showPastCourses;
 }
 
+
+function addsavedcourse() {
+	fetch(`http://localhost:3000/api/getSavedCourses`, {
+
+	})      .then(response => {
+		if (response.ok) {
+			console.log('Saved courses retrieved successfully');
+			console.log(response.json());
+		}
+		else {
+			console.error('Failed to retrieve saved courses:', response.statusText);
+		}
+	})
+}
 
 </script>
 
@@ -430,6 +445,7 @@ function togglePastCourses() {
 
   
 	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
+	<button class="add-course-button" on:click={() => addsavedcourse()}><i class="fas fa-plus"></i></button>
 
 
 	{#if filteredCourses.length > 0}

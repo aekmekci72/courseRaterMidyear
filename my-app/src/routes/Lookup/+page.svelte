@@ -338,11 +338,12 @@ async function addStudentToCourse(studentId, courseId) {
 		  <button class="add-course-button" on:click={() => {
 			const studentId = localStorage.getItem('selectedStudentId');
 			if (studentId !== null) {
+				alert(`Course "${course.course_name}" has been added to your scheudule!`);
+
 			  addStudentToCourse(parseInt(studentId), course.course_id);
 			}
 		  }}>+</button>
-		  
-		</div>
+		  		</div>
 	  {/each}
 	{:else}
 	  <p class="no-courses">No courses available.</p>

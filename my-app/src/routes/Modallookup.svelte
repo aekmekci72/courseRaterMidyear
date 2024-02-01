@@ -21,6 +21,7 @@ let courses = [];
 let searchTerm = '';
 let showModal = false;
 let selectedCourseName = '';
+let studentId = '';
 
 $: filteredCourses = courses.filter(
   (course) =>
@@ -84,33 +85,68 @@ onMount(async () => {
       console.log("submit");
     }
 
+    async function saveCourse() {
+  try {
+    const response = await fetch('http://localhost:3000/api/addSavedCourses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+      body: JSON.stringify({
+        courseId: course?.course_id,
+        courseName: course?.course_name,
+        teacherId: course?.teacher_id,
+        active: 1,
+        description: course?.description,
+        prereq: course?.prereq,
+      }),
+    });
+
+    if (response.ok) {
+      console.log('Course saved successfully!');
+      alert('Course saved successfully!');
+    } else {
+      console.error('Failed to save course:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error saving course:', error);
+  }
+}
 
 
 </script>
   
-  {#if isOpen}
-  <div class="modal">
-    <div class="modal-content">
-  
-      {#if course}
-      <h2>{courseName}</h2>
-        <p>Description: {desc}</p>
-        <p>Pre-requisites: {prereq}</p>
-        
-        <p>Difficulty Rating: {difficultyRating.toFixed(2)}</p>
-        <p>Interest Rating: {interestRating.toFixed(2)}</p>
-        <p>Teaching Style: {teachingStyle}</p>
+{#if isOpen}
+<div class="modal">
+  <div class="modal-content">
 
-      {/if}
-  
-      <button class="close-button" on:click={closeModal}>
-        X
-      </button>
-    </div>
+    {#if course}
+    <h2>{courseName}</h2>
+    <p>Description: {desc}</p>
+    <p>Pre-requisites: {prereq}</p>
+    
+    <p>Difficulty Rating: {difficultyRating.toFixed(2)}</p>
+    <p>Interest Rating: {interestRating.toFixed(2)}</p>
+    <p>Teaching Style: {teachingStyle}</p>
+
+    <!-- Save button -->
+    <button class="save-button" on:click={saveCourse}>Save Course</button>
+
+    {/if}
+
+    <button class="close-button" on:click={closeModal}>
+      X
+    </button>
   </div>
-  {/if}
+</div>
+{/if}
   
   <style>
+
+    .save-button {
+      margin-top: 3%;
+    }
     .modal {
       position: fixed;
       top: 0;

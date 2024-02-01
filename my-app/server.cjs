@@ -646,6 +646,52 @@ app.post('/api/coursestudentadd', async (req, res) => {
 });
 
 
+
+app.post('/api/addSavedCourses', async (req, res) => {
+  const { courseId, courseName, teacherId, active, description, prereq } = req.body;
+
+  try {
+    const connection = await createConnection();
+
+    try {
+      try {
+        const [result] = await connection.execute(`
+          INSERT INTO savedCourse (course_id_saved, course_name_saved, teacher_id_saved, active_saved, description_saved, prereq_saved)
+          VALUES (?, ?, ?, ?, ?, ?)`, [courseId, courseName, teacherId, active, description, prereq]);
+
+      } catch (error) {
+        console.error('Error inserting course:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      res.json({ success: true });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error adding student course:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/getSavedCourses', async (req, res) => {
+  try {
+    const connection = await createConnection();
+
+    try {
+      const [rows] = await connection.execute('SELECT * FROM savedCourse');
+      res.json(rows);
+    } catch (error) {
+      console.error('Error retrieving saved courses:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+      connection.end();
+    }
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
