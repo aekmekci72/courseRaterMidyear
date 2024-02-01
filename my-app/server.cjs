@@ -370,8 +370,7 @@ GROUP BY
       WHERE c.course_id IN (SELECT course_id FROM stuCourseXRef WHERE stu_id = ?)
         AND scr.stu_id = ?
       GROUP BY c.course_id, c.tag
-      ORDER BY avg_rating DESC
-      LIMIT 5;
+      ORDER BY avg_rating DESC;
       
       `, [studentId, studentId]);
 
@@ -403,8 +402,15 @@ GROUP BY
           LEFT JOIN tagCourseXRef ON course.course_id = tagCourseXRef.course_id
         WHERE
           student.stu_academy = (SELECT stu_academy FROM student WHERE stu_id = ?)
-          AND (stuCourseXRef.stu_id IS NULL OR stuCourseXRef.stu_id != ?) -- Exclude courses the student is already taking
-        GROUP BY
+          AND NOT EXISTS (
+            SELECT 1
+            FROM stuCourseXRef
+            WHERE stuCourseXRef.course_id = course.course_id
+              AND stuCourseXRef.stu_id = ?
+              AND stuCourseXRef.current = 1
+          )
+          
+          GROUP BY
           course.course_id
         ORDER BY
           (r1 + r2) DESC
