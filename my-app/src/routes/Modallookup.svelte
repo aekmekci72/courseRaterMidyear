@@ -131,7 +131,7 @@ onMount(async () => {
     <p>Teaching Style: {teachingStyle}</p>
 
     <!-- Save button -->
-    <button class="save-button" on:click={saveCourse}>Save Course</button>
+    <!-- <button class="save-button" on:click={saveCourse}>Save Course</button> -->
 
     {/if}
 

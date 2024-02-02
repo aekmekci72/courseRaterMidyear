@@ -177,7 +177,7 @@
 	<h1>Recommendations</h1>
 	
   
-	<input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" />
+	<!-- <input type="text" class="search" bind:value={searchTerm} placeholder="Search by course name" /> -->
   
 	{#if courses.length > 0}
 	{#each courses as course (course.course_id)}
