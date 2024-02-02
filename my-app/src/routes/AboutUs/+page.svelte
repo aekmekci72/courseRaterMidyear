@@ -6,6 +6,28 @@
     { name: 'Shreeja Das', role: 'shrdas26@bergen.org' },
     { name: 'Anna Ekmekci', role: 'annekm26@bergen.org' },
   ];
+  
+  let showModal2=false;
+  /**
+  * @param {string | undefined} studentId
+     */
+/**
+  /** @type {string | undefined} */
+  let selectedStudentId = '';
+     
+     /**
+     * @param {string | undefined} studentId
+     */
+     function openModal2(studentId) {
+	selectedStudentId = studentId;
+    showModal2 = true;
+  }
+  function addcourse() {
+    const studentId = localStorage.getItem('selectedStudentId');
+    openModal2(studentId || undefined);
+
+	}
+  
 </script>
 
 <style>
@@ -33,6 +55,16 @@
     text-decoration: underline;
   }
 
+
+  button{
+
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-family: 'Indie Flower', cursive;
+
+  }
   section {
     display: flex;
     align-items: center;
@@ -93,7 +125,13 @@
       </div>
     {/each}
   </div>
+  <div>
+    <button class="add-course-button" on:click={() => addcourse()}><i class="fas fa-plus"></i></button>
+  
+  </div>
+
 </section>
+
 
 
 <footer>
